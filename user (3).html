@@ -1,0 +1,3528 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title> Up</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Bengali) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E65C00;
+            --secondary: #1A237E;
+            --bg-gray: #F5F7FA;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0;
+            padding-bottom: 80px;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Glass Header */
+        .app-header {
+            background: #ffffff;
+            
+            color: #1F2937;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            padding: 2px;
+            border: 2px solid rgba(255,107,0,0.2);
+        }
+        .brand-image {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+        }
+        .wallet-badge {
+            background-color: rgba(255, 107, 0, 0.1);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            color: var(--primary);
+        }
+        .profile-icon {
+            background-color: #FFB74D;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            color: #E65100;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Bottom Navigation - Premium */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 0 10px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 100;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            border-top: 1px solid rgba(255,255,255,0.8);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.6rem;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 20%;
+            font-weight: 700;
+            padding: 4px 0;
+            border-radius: 12px;
+        }
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(255, 107, 0, 0.05);
+        }
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+            transition: transform 0.2s;
+        }
+        .nav-item.active i {
+            transform: scale(1.1);
+        }
+        .nav-item.add-btn {
+            position: relative;
+            top: -22px;
+            background: transparent !important;
+        }
+        .nav-item.add-btn .add-circle {
+            background: linear-gradient(135deg, #FF6B00, #E65C00);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.7rem;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.5);
+            border: 4px solid white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .nav-item.add-btn:active .add-circle {
+            transform: scale(0.9);
+            box-shadow: 0 2px 10px rgba(255, 107, 0, 0.3);
+        }
+        .nav-item.add-btn span {
+            margin-top: -2px;
+            font-size: 0.55rem;
+            color: #9CA3AF;
+        }
+        .nav-item.add-btn.active span {
+            color: var(--primary);
+        }
+
+        /* Views */
+        .view-section {
+            display: none;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+        .view-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 16px;
+            border: 1px solid #F3F4F6;
+            transition: transform 0.2s;
+        }
+        .card:active {
+            transform: scale(0.99);
+        }
+        
+        /* Premium Popup Notice */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .popup-overlay.active {
+            display: flex;
+        }
+        .popup-box {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .popup-box img {
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+        .popup-box h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 8px;
+        }
+        .popup-box p {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .popup-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #F3F4F6;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6B7280;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .popup-close:hover {
+            background: #E5E7EB;
+        }
+        .popup-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+            transition: transform 0.2s;
+        }
+        .popup-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* ================= Claim Success Popup ================= */
+        .claim-popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            
+            z-index: 350;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .claim-popup-overlay.active {
+            display: flex;
+        }
+        .claim-box {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: claimPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 351;
+            overflow: hidden;
+        }
+        @keyframes claimPopIn {
+            from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .claim-box .icon-circle {
+            background: #10B981;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+        }
+        .claim-box h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 8px;
+        }
+        .claim-box p {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+        .claim-box .prize-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: #FFF3E0;
+            padding: 10px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+        .claim-box .claim-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+            transition: transform 0.2s;
+            margin-top: 8px;
+        }
+        .claim-box .claim-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Notice Bar (Premium) */
+        .notice-bar {
+            background: #FFF3E0;
+            border: 1px solid #FFCC80;
+            color: #E65100;
+            font-size: 0.75rem;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            position: relative;
+        }
+        .notice-bar .close-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #E65100;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+        /* Banner Slider */
+        .banner-slider {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .banner-slider .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            cursor: pointer;
+        }
+        .banner-slider .slide.active {
+            opacity: 1;
+        }
+        .banner-slider .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+        .slider-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .slider-dots .dot.active {
+            background: white;
+            width: 20px;
+            border-radius: 4px;
+        }
+        
+        /* Section Title (Premium) */
+        .section-title {
+            text-align: left;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin: 20px 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-left: 12px;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        /* Game Grid with Shade */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .game-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+            border: 1px solid #F3F4F6;
+            position: relative;
+        }
+        .game-card:active {
+            transform: scale(0.97);
+        }
+        .game-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        .game-card .game-info {
+            padding: 6px 4px;
+            background: linear-gradient(to top, rgba(0,0,0,0.03), transparent);
+        }
+        .game-card p {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin: 0;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .game-card .category-shade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+            height: 40px;
+            pointer-events: none;
+        }
+        .badge-hot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #FF3D00;
+            color: white;
+            font-size: 0.5rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            z-index: 2;
+        }
+        
+        /* Recharge Grid */
+        .recharge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .recharge-item {
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 12px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            color: #4B5563;
+            background: #F9FAFB;
+        }
+        .recharge-item.selected {
+            border-color: var(--primary);
+            background-color: #FFF3E0;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(255, 107, 0, 0.1);
+        }
+        .recharge-item .price {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        /* Payment Methods - Custom Colors */
+        .payment-method {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #F9FAFB;
+        }
+        .payment-method.selected {
+            border-color: var(--primary);
+            background-color: #FFF3E0;
+        }
+        .payment-method .method-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .payment-method .method-info i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .payment-method .method-info .text-sm {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        /* Payment Method Specific Colors */
+        .payment-method[data-method="bkash"].selected {
+            border-color: #E2136E;
+            background-color: #FCE4EC;
+        }
+        .payment-method[data-method="bkash"].selected i {
+            color: #E2136E;
+        }
+        .payment-method[data-method="nagad"].selected {
+            border-color: #F7941D;
+            background-color: #FFF8E1;
+        }
+        .payment-method[data-method="nagad"].selected i {
+            color: #F7941D;
+        }
+        .payment-method[data-method="rocket"].selected {
+            border-color: #8E24AA;
+            background-color: #F3E5F5;
+        }
+        .payment-method[data-method="rocket"].selected i {
+            color: #8E24AA;
+        }
+
+        /* Payment Screen (Full Page) */
+        .payment-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 250;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 40px;
+        }
+        .payment-screen.active {
+            display: flex;
+        }
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .payment-header .back-btn {
+            background: #F3F4F6;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #4B5563;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .payment-header h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1F2937;
+        }
+        
+        /* Dark Blur Overlay for Payment */
+        .payment-overlay {
+            background: rgba(0,0,0,0.6);
+            
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .payment-overlay::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .payment-overlay .amount-display {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+        .payment-overlay .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .payment-overlay .info-row:last-child {
+            border-bottom: none;
+        }
+        .payment-overlay .info-row span:first-child {
+            opacity: 0.7;
+        }
+        .payment-overlay .info-row span:last-child {
+            font-weight: 700;
+        }
+        
+        /* Input fields in Payment Screen */
+        .payment-input-group {
+            margin-bottom: 16px;
+        }
+        .payment-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #4B5563;
+            margin-bottom: 4px;
+        }
+        .payment-input-group input {
+            width: 100%;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 14px 16px;
+            outline: none;
+            font-size: 0.95rem;
+            background: #F9FAFB;
+            font-weight: 600;
+            transition: border 0.2s;
+        }
+        .payment-input-group input:focus {
+            border-color: var(--primary);
+            background: white;
+        }
+        .payment-submit-btn {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+            transition: transform 0.2s;
+        }
+        .payment-submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Input Fields General */
+        input[type="text"], input[type="number"], input[type="email"], input[type="password"] {
+            width: 100%;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 12px 16px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border 0.2s;
+            background: #F9FAFB;
+            font-weight: 600;
+        }
+        input:focus {
+            border-color: var(--primary);
+            background: white;
+        }
+        
+        /* Profile / Account Styles */
+        .profile-header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #FFE0B2;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 8px;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(255,107,0,0.3);
+            position: relative;
+        }
+        .verified-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #10B981;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            border: 2px solid white;
+        }
+        .rank-badge {
+            background: #E8EAF6;
+            color: #1A237E;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .wallet-card {
+            background: linear-gradient(135deg, #1A237E 0%, #283593 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(26,35,126,0.3);
+        }
+        .wallet-card h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+        .rank-card {
+            background: linear-gradient(135deg, #8D6E63 0%, #5D4037 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .rank-progress {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 4px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .rank-progress-bar {
+            height: 100%;
+            background: #FFD54F;
+            border-radius: 4px;
+            width: 1%;
+        }
+        .rank-steps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .rank-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .rank-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #F3F4F6;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .rank-list li:last-child { border-bottom: none; }
+        .rank-list li .rank-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #E8EAF6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1A237E;
+            font-size: 0.8rem;
+        }
+        .rank-list li.locked .rank-icon {
+            background: #F3F4F6;
+            color: #9CA3AF;
+        }
+        .rank-list li.current {
+            color: var(--primary);
+        }
+        .rank-list li.current .rank-icon {
+            background: #FFF3E0;
+            color: var(--primary);
+        }
+
+        /* Support Section */
+
+        .status-badge{padding:3px 10px;border-radius:999px;font-size:.65rem;font-weight:800}
+        .status-pending{background:#FEF3C7;color:#D97706}
+        .status-completed{background:#D1FAE5;color:#059669}
+        .status-rejected{background:#FEE2E2;color:#DC2626}
+        .status-processing{background:#DBEAFE;color:#2563EB}
+        .status-approved{background:#D1FAE5;color:#059669}
+        /* ===== Live Recent Orders ===== */
+        .ro-card{background:linear-gradient(135deg,#fff1f4 0%,#fff 38%);border-radius:20px;box-shadow:0 6px 24px rgba(20,30,70,.08);margin:18px 0;overflow:hidden;border:1px solid #f3f4f6}
+        .ro-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f1f4}
+        .ro-head-icon{width:46px;height:46px;border-radius:14px;background:#fff0f3;display:flex;align-items:center;justify-content:center;color:#ff1f5a;font-size:1.2rem;border:1px solid #ffd9e2}
+        .ro-head h3{font-weight:800;font-size:1rem;color:#0f1535;margin:0}
+        .ro-live{display:flex;align-items:center;gap:6px;color:#12b34a;font-weight:700;font-size:.75rem}
+        .ro-dot{width:10px;height:10px;border-radius:50%;background:#12b34a;animation:roPulse 1.4s infinite}
+        @keyframes roPulse{0%{box-shadow:0 0 0 0 rgba(18,179,74,.5)}70%{box-shadow:0 0 0 8px rgba(18,179,74,0)}100%{box-shadow:0 0 0 0 rgba(18,179,74,0)}}
+        .ro-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #f1f1f4;animation:roIn .4s ease}
+        .ro-row:last-child{border-bottom:none}
+        @keyframes roIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+        .ro-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;color:#fff;font-weight:700;font-size:1rem;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 0 0 1px #e5e7eb}
+        .ro-info{flex:1;min-width:0}
+        .ro-name{font-weight:600;font-size:.85rem;color:#0f1535;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ro-sub{font-size:.7rem;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ro-badge{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;font-size:.68rem;font-weight:700;flex-shrink:0}
+        .ro-done{background:#e3f6e8;color:#12a244}
+        .ro-pending{background:#fff4d6;color:#c77d00}
+        .ro-empty{padding:24px;text-align:center;color:#9ca3af;font-size:.8rem;font-weight:600}
+        /* Admin message in order history */
+        .order-msg{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:8px 10px;margin-top:10px}
+        .order-msg .om-title{font-size:.65rem;font-weight:800;color:#ea580c;margin-bottom:3px}
+        .order-msg .om-text{font-size:.78rem;color:#7c2d12;font-weight:600;white-space:pre-wrap;word-break:break-word}
+        .om-copy{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #fdba74;color:#ea580c;border-radius:8px;padding:1px 7px;margin:0 3px;font-size:.65rem;font-weight:800;cursor:pointer;vertical-align:baseline}
+        .om-copy:active{transform:scale(.95)}
+        .om-copy.copied{background:#16a34a;border-color:#16a34a;color:#fff}
+        .om-val{font-weight:800;color:#9a3412}
+        .order-msg .om-text a{color:#2563eb;text-decoration:underline;word-break:break-all}
+        .order-msg .om-time{font-size:.6rem;color:#c2987a;margin-top:2px}
+        .support-section {
+            background: var(--secondary);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        .support-section h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .support-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+        .support-item i {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+        }
+        .support-footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        /* Auth session loading screen */
+        .auth-loading-screen{position:fixed;inset:0;z-index:300;background:linear-gradient(145deg,#fff8f0,#fff);display:flex;align-items:center;justify-content:center;transition:opacity .28s ease,visibility .28s ease}
+        .auth-loading-screen.hide{opacity:0;visibility:hidden;pointer-events:none}
+        .auth-loading-card{display:flex;flex-direction:column;align-items:center;gap:10px;color:#374151;font-size:14px}
+        .auth-loading-logo{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#fff;box-shadow:0 9px 24px #0002;position:relative;z-index:2;animation:devLogoFloat 2s ease-in-out infinite}
+        .auth-logo-rings{position:relative;width:82px;height:82px;display:grid;place-items:center;margin-bottom:2px}
+        .auth-logo-rings:before,.auth-logo-rings:after{content:"";position:absolute;inset:0;border:2px solid rgba(255,107,0,.5);border-radius:50%;animation:authRing 2s ease-out infinite}
+        .auth-logo-rings:after{animation-delay:1s}
+        .home-logo-wrap{position:relative;width:40px;height:40px;display:grid;place-items:center;flex:none}
+        .home-logo-wrap:before,.home-logo-wrap:after{content:"";position:absolute;inset:-3px;border:1.5px solid rgba(255,107,0,.55);border-radius:50%;animation:authRing 2s ease-out infinite}
+        .home-logo-wrap:after{animation-delay:1s}
+        .home-logo-wrap .logo-img{position:relative;z-index:2;width:36px;height:36px;animation:devLogoFloat 2s ease-in-out infinite}
+        .header-dev-tag{display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:10px;font-weight:800;white-space:nowrap;line-height:1}
+        .header-dev-tag .verify{font-size:11px;color:#2563eb}
+        @keyframes authRing{0%{transform:scale(.82);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+        @keyframes devLogoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.05)}}
+        .auth-loading-spinner{width:24px;height:24px;border:3px solid #ffe0c2;border-top-color:#ff6b00;border-radius:50%;animation:authSpin .7s linear infinite}
+        .auth-loading-card span{font-size:12px;color:#9ca3af}
+        @keyframes authSpin{to{transform:rotate(360deg)}}
+        @keyframes authPulse{50%{transform:scale(1.07)}}
+        /* Auth Modal (Login & Register) */
+        .auth-modal {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background: #FFF8F0;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #FFE0B2;
+        }
+        .auth-header {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .auth-header .badge {
+            color: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .auth-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1F2937;
+            line-height: 1.1;
+            margin: 0;
+        }
+        .auth-header h1 span {
+            color: var(--primary);
+        }
+        .auth-header p {
+            font-size: 0.8rem;
+            color: #6B7280;
+            margin-top: 8px;
+        }
+        /* Auth Tabs */
+        .auth-tabs {
+            display: flex;
+            background: #F3F4F6;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .auth-tab.inactive {
+            color: #6B7280;
+        }
+        /* Auth Cards */
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #FFE0B2;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .auth-card-icon {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        .auth-card-text h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #1F2937;
+            margin: 0;
+        }
+        .auth-card-text p {
+            font-size: 0.7rem;
+            color: #6B7280;
+            margin: 0;
+        }
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+            color: #9CA3AF;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+        }
+        .auth-input-group {
+            margin-bottom: 12px;
+        }
+        .auth-input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4B5563;
+            margin-bottom: 4px;
+        }
+        .auth-input-wrapper {
+            position: relative;
+        }
+        .auth-input-wrapper input {
+            padding-left: 40px;
+        }
+        .auth-input-wrapper i.input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+            font-size: 1rem;
+        }
+        .auth-input-wrapper .eye-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .auth-submit-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 8px;
+            box-shadow: 0 4px 10px rgba(255,107,0,0.2);
+        }
+        .auth-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #6B7280;
+        }
+        .auth-footer span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .auth-footer span i {
+            color: var(--primary);
+        }
+
+        /* Developer Page Styles */
+        .dev-container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-top: 20px;
+            border: 1px solid #F3F4F6;
+        }
+        .dev-avatar {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+        }
+        .dev-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            border: 3px solid var(--primary);
+            background: white;
+        }
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 107, 0, 0.4);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .ring1 { width: 120px; height: 120px; animation: pulse 2s infinite; }
+        .ring2 { width: 140px; height: 140px; animation: pulse 2s infinite 0.5s; }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+        }
+        .dev-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        }
+        .verify { color: #3B82F6; font-size: 1rem; }
+        .dev-role {
+            font-size: 0.8rem;
+            color: #6B7280;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .dev-stats {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: #FFF7ED;
+            padding: 10px 16px;
+            border-radius: 12px;
+            flex: 1;
+            border: 1px solid #FFEDD5;
+        }
+        .stat-box h2 { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .stat-box p { font-size: 0.65rem; color: #6B7280; margin: 0; font-weight: 700; }
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .skills span {
+            background: #F3F4F6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #4B5563;
+            font-weight: 700;
+        }
+        .about-card {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+            font-weight: 500;
+        }
+        .website-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
+        }
+        .website-btn:active {
+            transform: scale(0.98);
+        }
+        .website-btn i { margin-right: 8px; }
+
+        /* Spin Wheel Styles */
+        .spin-container {
+            text-align: center;
+            padding: 20px;
+        }
+        .spin-wheel {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #FF6B00 0deg 45deg,
+                #1A237E 45deg 90deg,
+                #FF6B00 90deg 135deg,
+                #1A237E 135deg 180deg,
+                #FF6B00 180deg 225deg,
+                #1A237E 225deg 270deg,
+                #FF6B00 270deg 315deg,
+                #1A237E 315deg 360deg
+            );
+            margin: 0 auto 20px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 3s ease-out;
+        }
+        .spin-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 24px solid #FF3D00;
+            z-index: 2;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .spin-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+            transition: transform 0.2s;
+        }
+        .spin-btn:active {
+            transform: scale(0.95);
+        }
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .category-spin-card {
+            background: linear-gradient(135deg, #FF6B00 0%, #E65C00 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+            transition: transform 0.2s;
+        }
+        .category-spin-card:active {
+            transform: scale(0.97);
+        }
+        .category-spin-card i {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        .category-spin-card h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0;
+        }
+        .category-spin-card p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin: 4px 0 0;
+        }
+
+        /* ===== FAB & APK Install Mini Popup ===== */
+        .fab-container {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .fab-btn {
+            background: linear-gradient(135deg, #FF6B00, #E65C00);
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .fab-btn:active {
+            transform: scale(0.9);
+        }
+        .apk-popup {
+            background: white;
+            border-radius: 16px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .apk-popup .icon {
+            background: #FFF3E0;
+            color: var(--primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+        }
+        .apk-popup .text {
+            flex: 1;
+        }
+        .apk-popup .text h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin: 0;
+            color: #1F2937;
+        }
+        .apk-popup .text p {
+            font-size: 0.65rem;
+            color: #6B7280;
+            margin: 0;
+        }
+        .apk-popup .install-btn {
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+        .apk-popup .close-popup {
+            color: #9CA3AF;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        /* ===== How to Add Money Section ===== */
+        .how-to-add {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #E5E7EB;
+            margin-top: 16px;
+        }
+        .how-to-add .icon-box {
+            background: #FFF3E0;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            margin: 0 auto 10px;
+        }
+        .how-to-add h4 {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+        .how-to-add p {
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+    
+/* Toast notification (replaces success popup) */
+#app-toast-wrap{position:fixed;top:12px;left:0;right:0;z-index:100000;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 12px}
+.app-toast{pointer-events:auto;max-width:420px;width:100%;background:#111827;color:#fff;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.25);transform:translateY(-16px);opacity:0;transition:transform .2s ease,opacity .2s ease}
+.app-toast.in{transform:translateY(0);opacity:1}
+.app-toast i{font-size:16px;color:#22c55e}
+.app-toast.err i{color:#ef4444}
+.app-toast span{flex:1;line-height:1.4;word-break:break-word}
+
+/* Social cards under slider */
+#social-cards{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+#social-cards:empty{display:none}
+.social-card{flex:1 1 140px;min-width:140px;display:flex;align-items:center;gap:12px;background:#111;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none}
+.social-card .sc-ic{width:34px;height:34px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.social-card small{display:block;font-size:9px;letter-spacing:.06em;opacity:.7;text-transform:uppercase}
+.social-card b{display:block;font-size:13px;font-weight:700}
+.banner-slider .slide img{content-visibility:auto}
+
+/* Brand payment instruction card */
+.pay-card{border-radius:12px;padding:18px 16px;color:#fff;margin:12px 0}
+.pay-card h4{text-align:center;font-size:15px;font-weight:800;margin:0 0 12px}
+.pay-card input.pay-in{width:100%;background:#fff;color:#334155;border:2px solid rgba(255,255,255,.6);border-radius:12px;padding:14px 16px;font-size:14px;margin-bottom:6px;outline:none}
+.pay-card ul{list-style:none;padding:0;margin:0}
+.pay-card li{position:relative;padding:12px 0 12px 14px;font-size:12.5px;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.18)}
+.pay-card li:last-child{border-bottom:0}
+.pay-card li::before{content:"";position:absolute;left:0;top:19px;width:5px;height:5px;border-radius:50%;background:#fff}
+.pay-card .pay-num{font-weight:800;color:#FFE14D;margin:0 4px}
+.pay-card .pay-copy{background:rgba(0,0,0,.28);color:#fff;border:0;border-radius:8px;padding:4px 10px;font-weight:700;font-size:12px;cursor:pointer;margin-left:4px}
+.pay-brand-tile{color:#fff!important;font-size:.9rem!important;font-weight:800!important;border:2px solid transparent!important}
+</style>
+
+<style>
+.permission-overlay{position:fixed;inset:0;background:rgba(10,15,30,.62);display:none;align-items:center;justify-content:center;padding:20px;z-index:99999;}
+.permission-overlay.show{display:flex}.permission-box{width:min(100%,360px);background:#fff;border-radius:20px;padding:24px 20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:permissionIn .18s ease-out}
+.permission-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;background:#fff3e8;color:#f07816;font-size:22px}
+.permission-title{font-size:19px;font-weight:800;color:#182033}.permission-message{font-size:13px;color:#687386;margin:8px 0 20px;line-height:1.6}.permission-actions{display:flex;gap:10px}.permission-actions button{flex:1;padding:11px;border-radius:10px;font-weight:700;font-size:13px}.permission-cancel{background:#eef1f5;color:#475569}.permission-confirm{background:#f07816;color:white}
+@keyframes permissionIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+</style>
+
+<style>
+/* ===== Game page (photo style) ===== */
+#view-game{padding:16px;}
+.gp-back{background:#fff;width:34px;height:34px;border-radius:50%;box-shadow:0 1px 6px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;color:#4B5563;margin-bottom:12px;border:none;cursor:pointer}
+.gp-header{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid #E5E7EB;border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.05);margin-bottom:14px;background-image:radial-gradient(circle at 100% 0,#f1f1f1 0,transparent 45%)}
+.gp-logo-wrap{width:84px;height:84px;border-radius:16px;border:1px solid #E5E7EB;padding:6px;background:#fff;flex:none;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.gp-logo{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.gp-title{font-size:1.4rem;font-weight:800;color:#111827;margin:0 0 8px}
+.gp-badge{display:inline-flex;align-items:center;gap:6px;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:999px;padding:4px 12px;font-size:.78rem;font-weight:700;color:#374151;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.gp-badge i{color:#F59E0B}
+.gp-layout{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.gp-layout{grid-template-columns:1.8fr 1fr;align-items:start}}
+.gp-right{display:flex;flex-direction:column;gap:14px}
+.gp-box{background:#fff;border:1px solid #E5E7EB;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);overflow:hidden}
+.gp-box-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #EEF0F3}
+.gp-box-head h3{margin:0;font-size:1.05rem;font-weight:700;color:#111827}
+.gp-step{width:24px;height:24px;border-radius:50%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800}
+.gp-box-body{padding:14px 16px}
+.gp-label{display:block;font-size:.9rem;font-weight:600;color:#111827;margin-bottom:6px}
+.gp-box-body input[type="text"]{background:#fff;border:1px solid #CBD5E1;border-radius:8px;padding:10px 12px;font-size:.9rem}
+.gp-box-body input[type="text"]:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+/* Packages */
+#recharge-packages{grid-template-columns:repeat(3,1fr);gap:8px}
+#recharge-packages .recharge-item{flex-direction:column;justify-content:center;gap:4px;text-align:center;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:12px 6px;color:#0F2A5F;font-size:.8rem;font-weight:600;min-height:62px}
+#recharge-packages .recharge-item .price{color:#111827;font-size:.72rem;font-weight:700}
+#recharge-packages .recharge-item.selected{border-color:#000;background:#F8FAFC;box-shadow:0 0 0 1.5px #000}
+/* Payment tiles */
+.gp-pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.payment-method.gp-pay{display:block;padding:0;position:relative;border:1px solid #D1D5DB;border-radius:10px;overflow:hidden;background:#fff;margin:0}
+.payment-method.gp-pay.selected{border:2px solid #374151;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.gp-pay-img{height:76px;display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;background:#fff}
+.gp-pay-img img{max-height:100%;max-width:100%;object-fit:contain;border-radius:8px}
+.gp-pay-label{background:#E5E7EB;color:#4B5563;font-size:.72rem;font-weight:600;padding:6px 8px}
+.gp-chip{color:#fff;font-size:.6rem;font-weight:800;padding:14px 6px;border-radius:8px}
+.gp-tick{display:none;position:absolute;top:0;left:0;width:34px;height:34px;background:#000;color:#fff;font-size:.7rem;clip-path:polygon(0 0,100% 0,0 100%);padding:4px 0 0 5px;z-index:2}
+.payment-method.gp-pay.selected .gp-tick{display:block}
+.gp-info{font-size:.85rem;color:#6B7280;margin:8px 0}
+.gp-info i{margin-right:4px}
+.gp-info-orange{color:#F59E0B;font-weight:600}
+.gp-buy-btn{width:100%;background:#000;color:#fff;border:none;border-radius:8px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:6px}
+.gp-buy-btn:active{transform:scale(.98)}
+.gp-rules{list-style:none;margin:0;padding:0}
+.gp-rules li{position:relative;padding:10px 0 10px 22px;font-size:.88rem;color:#374151;line-height:1.5}
+.gp-rules li::before{content:"";position:absolute;left:4px;top:18px;width:7px;height:7px;border-radius:50%;border:1.5px solid #6B7280}
+</style>
+<style>
+/* ===== Payment screen (photo style) ===== */
+.payment-screen{background:#EEF4FF !important;padding:16px !important}
+.pay2-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.pay2-top .back-btn{background:#fff;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 6px rgba(0,0,0,.1);cursor:pointer;color:#4B5563;flex:none}
+.pay2-logo{width:70px;height:70px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.pay2-title{font-size:1.35rem;font-weight:800;color:#64748B;margin:0}
+.pay2-summary{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.pay2-row{display:flex;justify-content:space-between;font-size:.82rem;padding:3px 0;color:#64748B}
+.pay2-row b{color:#111827}
+.pay2-bar{background:#0A4DB5;color:#fff;text-align:center;font-weight:600;font-size:.9rem;padding:9px;border-radius:6px;margin-bottom:12px}
+.pay2-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.pay2-method{background:#fff;border:1px solid #E2E8F0;border-radius:8px;height:64px;display:flex;align-items:center;justify-content:center;padding:6px;cursor:pointer;font-size:.75rem;font-weight:700;color:#374151;text-align:center;transition:all .15s}
+.pay2-method img{max-width:100%;max-height:100%;object-fit:contain}
+.pay2-method.selected{border:2px solid #0A4DB5;box-shadow:0 0 0 3px rgba(10,77,181,.12)}
+.pay2-banner{width:100%;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:16px;display:block}
+.pay2-note{background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:10px;padding:12px;margin-bottom:12px;font-size:.85rem}
+.pay2-btn{width:100%;background:#D6E4FF;color:#0A4DB5;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:8px}
+.pay2-btn:active{transform:scale(.98)}
+.gp-pay-logo{height:40px;max-width:31%;object-fit:contain;background:#fff;border:1px solid #EEF0F3;border-radius:8px;padding:3px}
+</style>
+</head>
+<body>
+    <!-- Firebase session check: prevents login form flashing during refresh -->
+    <div id="auth-loading" class="auth-loading-screen" aria-live="polite">
+        <div class="auth-loading-card">
+            <div class="auth-logo-rings"><img class="auth-loading-logo" src="https://cdn5.telesco.pe/file/KV14JR4hW72kePDT6R6wm52sUFKUfzFu6z5IN0t8qHFofRtIYb7YovqsypiMyDf1XJ3X5Rgj270pKOc1BGp7ay6fi-uYVsL1_-aJtqmVNE0ImvrYX_qJTYRd-Www8rNzhQiSqF0FhH5MlesIo3Dap0TfsiGh95j9HH_kkZ5-W4RNqL_FVPugu5yArCHvY3ApE8nMF05dbQvJZljglMpiBk_v3N_jylS66LrD2h1vXTKRkr7X9EWh3r2gMzt-j8KD_wqBqwXGL6t8IThzicf5q58HTtB28RpZWhoPfkG6OBK0aOihVSRFjoKOh2zjkgo7vBwxih21ytKjVeAlc94LUw.jpg" alt="App logo"></div>
+            <div class="auth-loading-spinner"></div>
+            <strong>লোড হচ্ছে...</strong>
+            <span>আপনার অ্যাকাউন্ট যাচাই করা হচ্ছে</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PREMIUM POPUP NOTICE ================= -->
+    <div id="popup-overlay" class="popup-overlay">
+        <div class="popup-box">
+            <div class="popup-close" onclick="closePopup()"><i class="fas fa-times"></i></div>
+            <img id="popup-image" src="https://via.placeholder.com/400x200/FF6B00/FFFFFF?text=Welcome+Offer" alt="Popup">
+            <h3 id="popup-title">Special Offer!</h3>
+            <p id="popup-message">Get 10% bonus on your first VPN purchase. Limited time offer!</p>
+            <button class="popup-btn" onclick="closePopup()">Claim Now</button>
+        </div>
+    </div>
+
+    <!-- ================= CLAIM SUCCESS POPUP ================= -->
+    <div id="claim-popup-overlay" class="claim-popup-overlay">
+        <div class="claim-box">
+            <div class="icon-circle"><i class="fas fa-check"></i></div>
+            <h3>Congratulations! 🎉</h3>
+            <p>You have won:</p>
+            <div class="prize-text" id="claim-prize-text">Free 100 Diamond</div>
+            <button class="claim-btn" onclick="closeClaimPopup()">Claim Now</button>
+        </div>
+    </div>
+
+    <!-- ================= HEADER ================= -->
+    <header class="app-header">
+        <div class="logo-area">
+            <div class="home-logo-wrap">
+                <img id="app-logo" src="https://cdn5.telesco.pe/file/KV14JR4hW72kePDT6R6wm52sUFKUfzFu6z5IN0t8qHFofRtIYb7YovqsypiMyDf1XJ3X5Rgj270pKOc1BGp7ay6fi-uYVsL1_-aJtqmVNE0ImvrYX_qJTYRd-Www8rNzhQiSqF0FhH5MlesIo3Dap0TfsiGh95j9HH_kkZ5-W4RNqL_FVPugu5yArCHvY3ApE8nMF05dbQvJZljglMpiBk_v3N_jylS66LrD2h1vXTKRkr7X9EWh3r2gMzt-j8KD_wqBqwXGL6t8IThzicf5q58HTtB28RpZWhoPfkG6OBK0aOihVSRFjoKOh2zjkgo7vBwxih21ytKjVeAlc94LUw.jpg" class="logo-img" alt="Logo">
+            </div>
+            <div style="display:flex;flex-direction:row;gap:5px;align-items:center;flex-wrap:nowrap;">
+                <span id="app-name" class="brand-text">FBX MUNNA SHOP</span><span class="header-dev-tag" aria-label="Verified developer"><i class="fa-solid fa-circle-check verify"></i></span>
+            </div>
+            <img id="brand-image" class="brand-image" src="" alt="Brand" style="display: none;">
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="wallet-badge" id="wallet-balance-header">
+                <i class="fas fa-wallet"></i> ৳0
+            </div>
+            <div class="profile-icon" onclick="showView('account')">M</div>
+        </div>
+    </header>
+
+    <!-- ================= MAIN VIEWS ================= -->
+
+    <!-- 1. HOME VIEW -->
+    <section id="view-home" class="view-section active">
+        <!-- Notice Bar -->
+        <div class="notice-bar" id="notice-bar">
+            <i class="fas fa-bullhorn"></i> 
+            <span id="notice-text">নোটিশ: সমস্ত পেমেন্ট ম্যানুয়ালি যাচাই করা হয়, দয়া করে অপেক্ষা করুন।</span>
+            <div class="close-btn" onclick="document.getElementById('notice-bar').style.display='none'"><i class="fas fa-times"></i></div>
+        </div>
+
+        <!-- Banner Slider -->
+        <div class="banner-slider" id="home-banner-slider">
+            <div class="slide active" onclick="window.open('https://example.com', '_blank')">
+                <img src="https://via.placeholder.com/400x160/FF6B00/FFFFFF?text=VPN" alt="Banner">
+            </div>
+            <div class="slide" onclick="window.open('https://example.com', '_blank')">
+                <img src="https://via.placeholder.com/400x160/1A237E/FFFFFF?text=Free+Fire+Top+Up" alt="Banner 2">
+            </div>
+            <div class="slider-dots" id="slider-dots">
+                <span class="dot active" onclick="goToSlide(0)"></span>
+                <span class="dot" onclick="goToSlide(1)"></span>
+            </div>
+        </div>
+
+        <div id="social-cards"></div>
+
+        <!-- Spin & Win Category (Admin Controlled) -->
+        <div id="spin-category-container" style="display: none;">
+            <h3 class="section-title">🎡 Spin & Win</h3>
+            <div class="category-spin-card" onclick="showView('spin')">
+                <i class="fas fa-gift"></i>
+                <h3>Spin & Win</h3>
+                <p>Spin the wheel and win exciting prizes!</p>
+            </div>
+        </div>
+
+        <!-- Flash Sale -->
+        <h3 class="section-title" id="flash-sale-title">FLASH SALE</h3>
+        <div class="game-grid" id="home-flash-sale">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Hot Product -->
+        <h3 class="section-title" id="hot-product-title">HOT PRODUCT</h3>
+        <div class="game-grid" id="home-hot-product">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Others Games -->
+        <h3 class="section-title" id="others-games-title">Others Games</h3>
+        <div class="game-grid" id="home-other-games">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <!-- Live Recent Orders -->
+        <div class="ro-card">
+            <div class="ro-head">
+                <div class="ro-head-icon"><i class="fas fa-shopping-bag"></i></div>
+                <div>
+                    <h3>Recent Orders</h3>
+                    <div class="ro-live"><span class="ro-dot"></span> Live <i class="fas fa-wave-square"></i></div>
+                </div>
+            </div>
+            <div id="recent-orders-list"><div class="ro-empty">Loading...</div></div>
+        </div>
+
+        <!-- Support Section -->
+        <div class="support-section">
+            <h3>STAY CONNECTED</h3>
+            <p class="text-xs opacity-80 mb-3">কোন সমস্যা পড়লে টেলিগ্রামে যোগাযোগ করুন। তাহলে দ্রুত সমাধান পেয়ে যাবেন।</p>
+            
+            <div class="flex gap-2 mb-4" id="social-links-bottom">
+                <a href="#" class="bg-white/10 w-10 h-10 rounded-full flex justify-center items-center text-white"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="bg-white/10 w-10 h-10 rounded-full flex justify-center items-center text-white"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="bg-white/10 w-10 h-10 rounded-full flex justify-center items-center text-white"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="bg-white/10 w-10 h-10 rounded-full flex justify-center items-center text-white"><i class="fas fa-envelope"></i></a>
+            </div>
+
+            <h3 class="mt-4">SUPPORT CENTER</h3>
+            <div class="support-item">
+                <i class="fab fa-whatsapp text-green-400"></i>
+                <div>
+                    <p class="font-bold text-xs">Help line [9AM-12PM]</p>
+                    <p class="text-xs opacity-80">WhatsApp HelpLine: <span class="helpline-number">01633985406</span></p>
+                </div>
+            </div>
+            <div class="support-item">
+                <i class="fab fa-telegram-plane text-blue-400"></i>
+                <div>
+                    <p class="font-bold text-xs">Help line [9AM-12PM]</p>
+                    <p class="text-xs opacity-80">টেলিগ্রামে সাপোর্ট</p>
+                </div>
+            </div>
+
+            <div class="support-footer">
+                <p>About Us | Terms & Conditions | Privacy Policy</p>
+                <p>Refund & Return Policy | Delete Account Policy</p>
+                <p class="mt-2">© VPN 2026 | All Rights Reserved | Developed by NextBuild Hub</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. SPIN VIEW (Category Based) -->
+    <section id="view-spin" class="view-section">
+        <div class="flex items-center mb-4">
+            <button onclick="showView('home')" class="mr-3 text-gray-600 bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm"><i class="fas fa-arrow-left"></i></button>
+            <h2 class="font-bold text-lg">Spin & Win</h2>
+        </div>
+        
+        <div class="card">
+            <div class="spin-container">
+                <div class="spin-wheel" id="spin-wheel">
+                    <div class="spin-pointer"></div>
+                </div>
+                <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Spin Now</button>
+                <p class="text-xs text-gray-500 mt-3" id="spin-status">You have 3 spins left today!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. GAME VIEW -->
+    <section id="view-game" class="view-section">
+        <button onclick="showView('home')" class="gp-back"><i class="fas fa-arrow-left"></i></button>
+
+        <!-- Game header card -->
+        <div class="gp-header">
+            <div class="gp-logo-wrap"><img id="game-header-img" class="gp-logo" src="" alt="Game"></div>
+            <div class="gp-head-text">
+                <h2 id="game-title" class="gp-title">Game Name</h2>
+                <span class="gp-badge"><i class="fas fa-bolt"></i> ২ সেকেন্ডে ডেলিভারি</span>
+            </div>
+        </div>
+
+        <div class="gp-layout">
+            <!-- Left: Select Recharge -->
+            <div class="gp-box">
+                <div class="gp-box-head"><span class="gp-step">1</span><h3>Select Recharge</h3></div>
+                <div class="gp-box-body">
+                    <div class="recharge-grid" id="recharge-packages"></div>
+                </div>
+            </div>
+
+            <div class="gp-right">
+                <!-- Select payment -->
+                <div class="gp-box">
+                    <div class="gp-box-head"><span class="gp-step">2</span><h3>Select one option</h3></div>
+                    <div class="gp-box-body">
+                        <div class="gp-pay-grid" id="payment-methods-game">
+                            <div class="payment-method gp-pay selected" data-method="wallet" onclick="selectGamePayment(this, 'wallet')">
+                                <span class="gp-tick"><i class="fas fa-check"></i></span>
+                                <div class="gp-pay-img"><img id="wallet-pay-img" src="https://cdn5.telesco.pe/file/KV14JR4hW72kePDT6R6wm52sUFKUfzFu6z5IN0t8qHFofRtIYb7YovqsypiMyDf1XJ3X5Rgj270pKOc1BGp7ay6fi-uYVsL1_-aJtqmVNE0ImvrYX_qJTYRd-Www8rNzhQiSqF0FhH5MlesIo3Dap0TfsiGh95j9HH_kkZ5-W4RNqL_FVPugu5yArCHvY3ApE8nMF05dbQvJZljglMpiBk_v3N_jylS66LrD2h1vXTKRkr7X9EWh3r2gMzt-j8KD_wqBqwXGL6t8IThzicf5q58HTtB28RpZWhoPfkG6OBK0aOihVSRFjoKOh2zjkgo7vBwxih21ytKjVeAlc94LUw.jpg" alt="Wallet"></div>
+                                <div class="gp-pay-label">Wallet Pay</div>
+                            </div>
+                            <div class="payment-method gp-pay" data-method="instant" onclick="selectGamePayment(this, 'instant')">
+                                <span class="gp-tick"><i class="fas fa-check"></i></span>
+                                <div class="gp-pay-img" id="instant-logos"><img src="https://tse3.mm.bing.net/th/id/OIP.KEGEJmiyxdAUcXSujtDEAQHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="bKash, Nagad, Rocket"></div>
+                                <div class="gp-pay-label">Instant Pay</div>
+                            </div>
+                        </div>
+
+                        <p class="gp-info"><i class="fas fa-info-circle"></i> প্রোডাক্ট কিনতে আপনার প্রয়োজন <b id="need-amount">0</b> টাকা।</p>
+                        <p class="gp-info gp-info-orange">
+                            <i class="fas fa-wallet"></i> Available Balance: <b id="wallet-balance-game">৳0</b>
+                            <i class="fas fa-sync-alt" style="cursor:pointer;margin-left:6px;" onclick="updateWalletBalanceUI()"></i>
+                        </p>
+                        <button class="gp-buy-btn" onclick="placeOrder()">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules & Conditions (controlled from Admin > Categories) -->
+        <div class="gp-box" id="game-rules-box" style="margin-top:16px;display:none;">
+            <div class="gp-box-head"><i class="fas fa-book" style="margin-right:8px;"></i><h3>Rules &amp; Conditions</h3></div>
+            <div class="gp-box-body">
+                <ul class="gp-rules" id="game-rules-list"></ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. MY ORDERS VIEW -->
+    <section id="view-orders" class="view-section">
+        <h2 class="font-bold text-lg mb-4">My Orders</h2>
+        <div id="orders-list">
+            <!-- Loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- 5. ADD MONEY VIEW (Deposit) -->
+    <section id="view-add-money" class="view-section">
+        <div class="card">
+            <h3 class="font-bold text-lg mb-4">Add Money</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Enter the amount</label>
+                <input type="number" id="deposit-amount" placeholder="Amount">
+            </div>
+            <button class="btn-primary" onclick="proceedToDeposit()">Click Here To Add Money</button>
+        </div>
+
+        <!-- Payment Methods for Deposit -->
+        <div class="card" id="deposit-methods-card" style="display: none;">
+            <h3 class="font-bold text-md mb-3">Select Payment Method</h3>
+            <div id="deposit-methods-list">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+        
+        <!-- Manual Deposit Info (Hidden by default, shown when method selected) -->
+        <div class="card" id="deposit-info-card" style="display: none;">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-700" id="deposit-instructions">
+                <p class="font-bold mb-1">ট্রানজেকশন আইডি দিন</p>
+                <p>নিচের নাম্বারে Send Money করে ট্রানজেকশন আইডি সাবমিট করুন।</p>
+                <p class="font-bold mt-2">Payment Number: <span id="deposit-number">01633985406</span> <i class="fas fa-copy cursor-pointer text-gray-500 ml-1" onclick="copyToClipboard('deposit-number')"></i></p>
+            </div>
+            <div class="mb-3">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Transaction ID</label>
+                <input type="text" id="deposit-txid" placeholder="Enter Transaction ID">
+            </div>
+            <button class="btn-primary" onclick="submitDepositRequest()">Verify & Submit</button>
+        </div>
+
+        <!-- How to Add Money -->
+        <div class="how-to-add">
+            <div class="icon-box"><i class="fas fa-info-circle"></i></div>
+            <h4>How to add money</h4>
+            <p>Watch the short guide before completing your payment.</p>
+            <div class="bg-gray-200 h-32 rounded-lg mt-3 flex items-center justify-center text-gray-400">
+                <i class="fas fa-file-video text-4xl"></i>
+            </div>
+        </div>
+
+        <!-- Deposit History -->
+        <h3 class="font-bold text-md mb-3 mt-6">Deposit History</h3>
+        <div id="deposit-history-list">
+             <p class="text-gray-400 text-center text-sm font-semibold">No deposit requests found.</p>
+        </div>
+    </section>
+
+    <!-- 6. MY CODES VIEW -->
+    <section id="view-codes" class="view-section">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">My Codes</h2>
+            <button class="text-orange-500 font-bold text-sm"><i class="fas fa-redo-alt"></i> Redeem Code</button>
+        </div>
+        <div id="codes-list">
+            <!-- Loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- 7. MY ACCOUNT VIEW -->
+    <section id="view-account" class="view-section">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="account-avatar">
+                M
+                <div class="verified-badge"><i class="fas fa-check"></i></div>
+            </div>
+            <h3 class="font-bold text-xl" id="account-name">User</h3>
+            <div class="rank-badge">
+                <i class="fas fa-shield-alt"></i> Bronze Member
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Level 1 / Current Rank</p>
+        </div>
+
+        <!-- Wallet Card -->
+        <div class="wallet-card">
+            <p class="text-xs opacity-80 font-semibold">Wallet Balance</p>
+            <h2>৳<span id="wallet-balance-account">0</span></h2>
+            <button class="btn-primary w-full mt-2" onclick="showView('add-money')">Add Money</button>
+        </div>
+
+        <!-- Rank Card -->
+        <div class="rank-card">
+            <div class="flex justify-center mb-2">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex justify-center items-center text-2xl">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+            </div>
+            <p class="text-xs uppercase tracking-wider opacity-80">Current Rank</p>
+            <h3 class="text-xl font-bold">Bronze</h3>
+            <p class="text-xs opacity-80">Start your journey from Bronze.</p>
+            
+            <div class="flex justify-between text-xs font-bold mt-4">
+                <span>0 - 100 Tk</span>
+                <span>1%</span>
+            </div>
+            <div class="rank-progress">
+                <div class="rank-progress-bar"></div>
+            </div>
+            <p class="text-xs opacity-80">Need only <b>101 Tk</b> to unlock Silver</p>
+            
+            <div class="bg-white/10 p-3 rounded-xl mt-3 text-left">
+                <p class="font-bold text-sm"><i class="fas fa-star text-yellow-400"></i> Unlock More Premium Products</p>
+                <p class="text-xs opacity-80 mt-1">Spend more to increase your Total Spend and Rank, then unlock premium products, low-rate VPN plans, verified profile icons, and future VIP benefits.</p>
+            </div>
+        </div>
+
+        <!-- Rank Journey -->
+        <div class="card">
+            <h3 class="font-bold text-sm mb-3 text-orange-500">RANK JOURNEY</h3>
+            <div class="flex justify-between items-center mb-3">
+                <p class="font-bold text-sm">Your Path</p>
+                <span class="text-xs font-bold text-orange-500">1/8</span>
+            </div>
+            <ul class="rank-list">
+                <li class="current">
+                    <div class="flex items-center gap-2">
+                        <div class="rank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><p class="font-bold">Bronze</p><p class="text-xs text-gray-500">0 - 100 Tk</p></div>
+                    </div>
+                    <span class="text-xs font-bold text-blue-600"><i class="fas fa-check-circle"></i> Current</span>
+                </li>
+                <li class="locked">
+                    <div class="flex items-center gap-2">
+                        <div class="rank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><p class="font-bold">Silver</p><p class="text-xs text-gray-500">101 - 1,000 Tk</p></div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400"><i class="fas fa-lock"></i> Locked</span>
+                </li>
+                <li class="locked">
+                    <div class="flex items-center gap-2">
+                        <div class="rank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><p class="font-bold">Gold</p><p class="text-xs text-gray-500">1,001 - 5,000 Tk</p></div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400"><i class="fas fa-lock"></i> Locked</span>
+                </li>
+                <li class="locked">
+                    <div class="flex items-center gap-2">
+                        <div class="rank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><p class="font-bold">Platinum</p><p class="text-xs text-gray-500">5,001 - 10,000 Tk</p></div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400"><i class="fas fa-lock"></i> Locked</span>
+                </li>
+                <li class="locked">
+                    <div class="flex items-center gap-2">
+                        <div class="rank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><p class="font-bold">Diamond</p><p class="text-xs text-gray-500">10,001 - 25,000 Tk</p></div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400"><i class="fas fa-lock"></i> Locked</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Account Info List -->
+        <div class="card">
+            <h3 class="font-bold text-sm mb-3 text-orange-500">ACCOUNT</h3>
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div class="bg-blue-100 text-blue-500 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-user"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">NAME</p>
+                        <p class="font-bold text-sm" id="account-name-list">User</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div class="bg-blue-100 text-blue-500 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-phone"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">PHONE</p>
+                        <p class="font-bold text-sm">-</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div class="bg-blue-100 text-blue-500 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">EMAIL</p>
+                        <p class="font-bold text-sm" id="account-email">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="card p-0 overflow-hidden">
+            <div class="p-4 border-b flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition" onclick="showView('orders')">
+                <div class="bg-orange-100 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center text-lg"><i class="fas fa-shopping-bag"></i></div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">My Orders</p>
+                    <p class="text-xs text-gray-500">View your order history</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+            <div class="p-4 border-b flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition" onclick="showView('codes')">
+                <div class="bg-orange-100 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center text-lg"><i class="fas fa-ticket-alt"></i></div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">My Codes</p>
+                    <p class="text-xs text-gray-500">Your purchased codes</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+            <div class="p-4 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition" onclick="showView('add-money')">
+                <div class="bg-orange-100 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center text-lg"><i class="fas fa-plus-circle"></i></div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">Add Money</p>
+                    <p class="text-xs text-gray-500">Add money to your wallet</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- Developer Profile Section -->
+        <div class="dev-container">
+            <div class="dev-avatar">
+                <div class="ring ring1"></div>
+                <div class="ring ring2"></div>
+                <img id="dev-photo" src="https://cdn5.telesco.pe/file/KV14JR4hW72kePDT6R6wm52sUFKUfzFu6z5IN0t8qHFofRtIYb7YovqsypiMyDf1XJ3X5Rgj270pKOc1BGp7ay6fi-uYVsL1_-aJtqmVNE0ImvrYX_qJTYRd-Www8rNzhQiSqF0FhH5MlesIo3Dap0TfsiGh95j9HH_kkZ5-W4RNqL_FVPugu5yArCHvY3ApE8nMF05dbQvJZljglMpiBk_v3N_jylS66LrD2h1vXTKRkr7X9EWh3r2gMzt-j8KD_wqBqwXGL6t8IThzicf5q58HTtB28RpZWhoPfkG6OBK0aOihVSRFjoKOh2zjkgo7vBwxih21ytKjVeAlc94LUw.jpg">
+            </div>
+            <h1 class="MADARA">
+                <span>N</span><span> </span><span>B</span><span> </span><span>H</span><span> </span><i class="fa-solid fa-circle-check verify"></i>
+            </h1>
+            <div class="dev-role">ORDER করতে টেলিগ্রামে মেসেজ করুন</div>
+            <div class="dev-stats">
+                <div class="stat-box"><h2>2+</h2><p>Years Exp</p></div>
+                <div class="stat-box"><h2>256+</h2><p>Apps Built</p></div>
+                <div class="stat-box"><h2>100%</h2><p>Delivered</p></div>
+            </div>
+            <div class="skills">
+                <span>Flutter</span><span>Skatchwer</span><span>HopWeb</span><span>PHP</span><span>Firebase</span><span>MySQL</span>
+            </div>
+            <div class="about-card">
+                <h3>হ্যালো! 👋</h3>
+                <p>আমি একজন Professional Software Developer। আমি Tournament App, VPN Website, E-Commerce Website এবং Custom App আরো বিভিন্ন app তৈরি করি।</p>
+            </div>
+            <button class="website-btn" onclick="window.open('https://t.me/NextBuildHub', '_blank')">
+                <i class="fa-solid fa-globe"></i> Website
+            </button>
+        </div>
+
+        <button class="btn-outline mt-4 text-red-500 border-red-500 hover:bg-red-50" onclick="logoutUser()">Logout</button>
+    </section>
+
+    <!-- ================= PAYMENT SCREEN (Full Page) ================= -->
+    <div id="payment-screen" class="payment-screen">
+        <div class="pay2-top">
+            <div class="back-btn" onclick="closePaymentScreen()"><i class="fas fa-arrow-left"></i></div>
+            <img id="payment-logo" class="pay2-logo" src="" alt="Logo">
+            <h2 class="pay2-title">Payment</h2>
+        </div>
+
+        <div class="pay2-summary">
+            <div class="pay2-row"><span>Game</span><b id="payment-info-game">-</b></div>
+            <div class="pay2-row"><span>Package</span><b id="payment-info-package">-</b></div>
+        </div>
+
+        <div class="pay2-bar">মোবাইল ব্যাংকিং</div>
+        <div class="pay2-methods" id="payment-methods-grid"></div>
+
+        <div id="pay2-banner-wrap" style="display:none;">
+            <img id="pay2-banner" class="pay2-banner" src="" alt="Banner">
+        </div>
+
+        <div id="payment-manual-fields" style="display:none;"></div>
+
+        <button class="pay2-btn" id="payment-submit-btn" onclick="finalizePayment()">ভেরিফাই <span id="payment-amount" style="display:none">0.00</span></button>
+    </div>
+
+    <!-- ================= AUTHENTICATION MODAL (Login & Register) ================= -->
+    <div id="auth-modal" class="auth-modal" style="display: none;">
+        <div class="auth-container">
+            <div class="auth-header">
+                <span class="badge">● SECURE ACCOUNT ACCESS</span>
+                <h1>Welcome <br><span>Back</span></h1>
+                <p>Fast, secure and simple access to your VPN account.</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign In</div>
+                <div class="auth-tab inactive" id="tab-register" onclick="switchAuthTab('register')">Create Account</div>
+            </div>
+
+            <div class="auth-card">
+                <div class="auth-card-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="auth-card-text">
+                    <h3>Sign in to continue</h3>
+                    <p>Access your account securely</p>
+                </div>
+            </div>
+
+            <div class="auth-card" style="border: 1px solid #E5E7EB; padding: 10px 14px; cursor: pointer;" onclick="alert('Google Login is not enabled yet. Please use email.')">
+                <div class="flex items-center gap-2">
+                    <i class="fab fa-google text-red-500 text-xl"></i>
+                    <div class="auth-card-text">
+                        <h3>Continue with Google</h3>
+                        <p>Quick and secure sign in</p>
+                    </div>
+                </div>
+                <div class="bg-orange-100 text-orange-500 w-8 h-8 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="auth-divider">OR CONTINUE WITH EMAIL</div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="auth-input-group">
+                    <label>Email address</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="login-email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye eye-icon" onclick="togglePassword('login-password')"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">Sign In</button>
+                <p class="text-center text-sm text-orange-500 mt-4 cursor-pointer font-semibold" onclick="resetPassword()">Forgot Password?</p>
+            </form>
+
+            <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
+                <div class="auth-input-group">
+                    <label>Full Name</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="reg-name" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Email address</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="reg-email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="reg-password" placeholder="Enter your password (min 6 chars)" required>
+                        <i class="fas fa-eye eye-icon" onclick="togglePassword('reg-password')"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <span><i class="fas fa-bolt"></i> Fast</span>
+                <span><i class="fas fa-lock"></i> Secure</span>
+                <span><i class="fas fa-check-circle"></i> Trusted</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FAB & APK Install Mini Popup ================= -->
+    <div class="fab-container" id="fab-container">
+        <div class="apk-popup" id="apk-popup">
+            <div class="icon"><i class="fas fa-download"></i></div>
+            <div class="text">
+                <h4>Install App</h4>
+                <p>Install the app</p>
+            </div>
+            <button class="install-btn" onclick="window.open('https://example.com/app.apk', '_blank')">Install</button>
+            <div class="close-popup" onclick="document.getElementById('apk-popup').style.display='none'"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="fab-btn" id="help-fab" onclick="openHelp()">
+            <i class="fas fa-headset"></i>
+        </div>
+    </div>
+
+    <!-- ================= BOTTOM NAVIGATION ================= -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <div class="nav-item active" onclick="showView('home')" data-view="home">
+            <i class="fas fa-home"></i><span>Home</span>
+        </div>
+        <div class="nav-item" onclick="showView('orders')" data-view="orders">
+            <i class="fas fa-shopping-bag"></i><span>My Orders</span>
+        </div>
+        <div class="nav-item add-btn" onclick="showView('add-money')" data-view="add-money">
+            <div class="add-circle"><i class="fas fa-plus"></i></div>
+            <span>Add Money</span>
+        </div>
+        <div class="nav-item" onclick="showView('codes')" data-view="codes">
+            <i class="fas fa-ticket-alt"></i><span>My Codes</span>
+        </div>
+        <div class="nav-item" onclick="showView('account')" data-view="account">
+            <i class="fas fa-user"></i><span>My Account</span>
+        </div>
+    </nav>
+
+    <!-- ================= FIREBASE & APP LOGIC ================= -->
+    <script type="module">
+        // Reusable confirmation popup for Update / Delete / Buy actions
+        function showPermissionPopup(title, message, confirmText = 'Confirm') {
+            return new Promise(resolve => {
+                const popup = document.getElementById('permission-popup');
+                const finish = (answer) => { popup.classList.remove('show'); document.removeEventListener('keydown', onKey); resolve(answer); };
+                const onKey = e => { if (e.key === 'Escape') finish(false); };
+                document.getElementById('permission-title').textContent = title;
+                document.getElementById('permission-message').textContent = message;
+                document.getElementById('permission-confirm').textContent = confirmText;
+                popup.classList.add('show');
+                document.getElementById('permission-cancel').onclick = () => finish(false);
+                document.getElementById('permission-confirm').onclick = () => finish(true);
+                popup.onclick = e => { if (e.target === popup) finish(false); };
+                document.addEventListener('keydown', onKey);
+            });
+        }
+
+        // Custom HTML notice popup: replaces browser-native alert()
+        function showNoticePopup(message, title = 'Notice') {
+            let wrap = document.getElementById('app-toast-wrap');
+            if (!wrap) { wrap = document.createElement('div'); wrap.id = 'app-toast-wrap'; document.body.appendChild(wrap); }
+            const msg = String(message ?? '');
+            const isErr = /fail|error|invalid|insufficient|please|no spins|out of stock|not enabled|এরর|কমপক্ষে|প্রথমে/i.test(msg);
+            const t = document.createElement('div');
+            t.className = 'app-toast' + (isErr ? ' err' : '');
+            t.innerHTML = '<i class="fas ' + (isErr ? 'fa-exclamation-circle' : 'fa-check-circle') + '"></i><span></span>';
+            t.querySelector('span').textContent = msg;
+            t.onclick = () => t.remove();
+            wrap.appendChild(t);
+            requestAnimationFrame(() => t.classList.add('in'));
+            while (wrap.children.length > 3) wrap.firstChild.remove();
+            setTimeout(() => { t.classList.remove('in'); setTimeout(() => t.remove(), 220); }, 3200);
+            return Promise.resolve();
+        }
+        function showInputPopup(title, label, initialValue = '') {
+            return new Promise(resolve => {
+                const overlay = document.getElementById('app-input-popup');
+                const input = document.getElementById('app-input-value');
+                document.getElementById('app-input-title').textContent = title;
+                document.getElementById('app-input-label').textContent = label;
+                input.value = initialValue ?? '';
+                overlay.classList.add('show');
+                const finish = value => { overlay.classList.remove('show'); resolve(value); };
+                document.getElementById('app-input-cancel').onclick = () => finish(null);
+                document.getElementById('app-input-save').onclick = () => finish(input.value);
+                overlay.onclick = e => { if (e.target === overlay) finish(null); };
+                input.focus(); input.select();
+            });
+        }
+        window.alert = message => { showNoticePopup(message); };
+        document.addEventListener('invalid', event => {
+            event.preventDefault();
+            showNoticePopup(event.target.validationMessage || 'Please complete this field.', 'Please check the form');
+        }, true);
+
+        // ==========================================
+        // 1. FIREBASE CONFIGURATION (Your Config)
+        // ==========================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyA8J1Ea4j-xlrf5oJ7LVhMZJj5dVhI70D0",
+  authDomain: "adminuser-a59b2.firebaseapp.com",
+  databaseURL: "https://adminuser-a59b2-default-rtdb.firebaseio.com",
+  projectId: "adminuser-a59b2",
+  storageBucket: "adminuser-a59b2.firebasestorage.app",
+  messagingSenderId: "72072329676",
+  appId: "1:72072329676:web:9fc68176313b1acebc4569",
+  measurementId: "G-D7N4KQ271V"
+};
+
+        // ==========================================
+        // 2. IMPORTS
+        // ==========================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, runTransaction, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ==========================================
+        // 3. INITIALIZATION
+        // ==========================================
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        // Keep the Firebase session across refreshes and browser restarts.
+        await setPersistence(auth, browserLocalPersistence);
+
+        // ==========================================
+        // 4. GLOBAL STATE
+        // ==========================================
+        let currentUser = null;
+        let userData = null;
+        let currentGame = null;
+        let selectedPackage = null;
+        let selectedPaymentMethod = 'wallet';
+        let gamesData = [];
+        let selectedGamePaymentMethod = 'wallet';
+        let currentSlideIndex = 0;
+        let slideInterval;
+        let spinCount = 3;
+        let unsubscribers = [];
+        let paymentMethodsData = [];
+        let selectedInstantMethod = null;
+        let paymentBannerUrl = '';
+        let helpLinkUrl = 'https://t.me/NextBuildHub';
+
+        // ==========================================
+        // 5. AUTHENTICATION LOGIC
+        // ==========================================
+        onAuthStateChanged(auth, (user) => {
+            const authModal = document.getElementById('auth-modal');
+            const bottomNav = document.getElementById('bottom-nav');
+            const authLoading = document.getElementById('auth-loading');
+
+            // Clear old listeners when the account changes; prevents duplicate reads.
+            unsubscribers.forEach(unsub => { try { unsub(); } catch (_) {} });
+            unsubscribers = [];
+
+            if (user) {
+                currentUser = user;
+                authModal.style.display = 'none';
+                bottomNav.style.display = 'flex';
+
+                const userDocRef = doc(db, 'users', user.uid);
+                // Start app-wide live data requests immediately instead of waiting for
+                // the profile document's network round-trip.
+                startRealtimeListeners();
+
+                // onSnapshot can render Firestore's local cached profile first, then
+                // quietly replace it with the latest server data.
+                let firstProfileSnapshot = true;
+                const unsubUser = onSnapshot(userDocRef, async (snapshot) => {
+                    if (snapshot.exists()) {
+                        userData = snapshot.data();
+                    } else if (!snapshot.metadata.fromCache) {
+                        userData = {
+                            name: user.displayName || 'User',
+                            email: user.email,
+                            walletBalance: 0,
+                            isAdmin: false,
+                            createdAt: serverTimestamp()
+                        };
+                        try { await setDoc(userDocRef, userData); }
+                        catch (error) { console.error('Could not create user profile:', error); }
+                    } else {
+                        // Temporary safe defaults while the server confirms profile state.
+                        userData = { name: user.displayName || 'User', email: user.email, walletBalance: 0, isAdmin: false };
+                    }
+                    updateUserUI();
+                    updateWalletBalanceUI();
+                    if (firstProfileSnapshot) {
+                        firstProfileSnapshot = false;
+                        authLoading.classList.add('hide');
+                    }
+                }, (error) => {
+                    console.error('User profile listener error:', error);
+                    userData = { name: user.displayName || 'User', email: user.email, walletBalance: 0, isAdmin: false };
+                    updateUserUI();
+                    authLoading.classList.add('hide');
+                });
+                unsubscribers.push(unsubUser);
+            } else {
+                currentUser = null;
+                userData = null;
+                authModal.style.display = 'flex';
+                bottomNav.style.display = 'none';
+                authLoading.classList.add('hide');
+            }
+        });
+
+        // ==========================================
+        // 6. REAL-TIME LISTENERS (Admin Panel Sync)
+        // ==========================================
+        function startRealtimeListeners() {
+            // 1. App Settings (Brand Logo, App Logo, Helpline, Notice)
+            unsubscribers.push(onSnapshot(doc(db, "settings", "app"), (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    if (data.appLogo) {
+                        document.getElementById('app-logo').src = data.appLogo;
+                        document.getElementById('dev-photo').src = data.appLogo;
+                        document.getElementById('wallet-pay-img').src = data.appLogo;
+                    }
+                    paymentBannerUrl = data.paymentBanner || '';
+                    if (typeof data.helpLink === 'string') helpLinkUrl = data.helpLink.trim();
+                    document.getElementById('help-fab').style.display = helpLinkUrl ? 'flex' : 'none';
+                    document.getElementById('app-name').textContent = 'FBX MUNNA SHOP';
+                    if (data.brandImage) {
+                        const brandImg = document.getElementById('brand-image');
+                        brandImg.src = data.brandImage;
+                        brandImg.style.display = 'block';
+                        document.getElementById('app-name').style.display = 'none';
+                    }
+                    if (data.helpline) {
+                        const helplineElements = document.querySelectorAll('.helpline-number');
+                        helplineElements.forEach(el => el.textContent = data.helpline);
+                    }
+                    if (data.noticeText) {
+                        document.getElementById('notice-text').textContent = data.noticeText;
+                    }
+                }
+            }));
+
+            // 2. Home Settings (Section Titles)
+            unsubscribers.push(onSnapshot(doc(db, "settings", "home"), (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    if (data.flashSaleTitle) document.getElementById('flash-sale-title').textContent = data.flashSaleTitle;
+                    if (data.hotProductTitle) document.getElementById('hot-product-title').textContent = data.hotProductTitle;
+                    if (data.othersGamesTitle) document.getElementById('others-games-title').textContent = data.othersGamesTitle;
+                }
+            }));
+
+            // 3. Popup Settings
+            unsubscribers.push(onSnapshot(doc(db, "settings", "popup"), (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    if (data.active) {
+                        document.getElementById('popup-image').src = data.imageUrl || 'https://via.placeholder.com/400x200/FF6B00/FFFFFF?text=Welcome';
+                        document.getElementById('popup-title').textContent = data.title || 'Special Offer!';
+                        document.getElementById('popup-message').textContent = data.message || 'Check out our latest offer!';
+                        // Show the admin-configured popup after the user reaches Home.
+                        document.getElementById('popup-overlay').classList.add('active');
+                    } else {
+                        document.getElementById('popup-overlay').classList.remove('active');
+                    }
+                }
+            }));
+
+            // 4. Social Links (admin controlled cards)
+            unsubscribers.push(onSnapshot(doc(db, "settings", "social"), (snap) => {
+                const box = document.getElementById('social-cards');
+                if (!box) return;
+                const data = snap.exists() ? snap.data() : {};
+                let links = Array.isArray(data.links) ? data.links : [];
+                if (!links.length) {
+                    if (data.telegram) links.push({ label: 'Telegram', sub: 'Support', icon: 'telegram', url: data.telegram });
+                    if (data.facebook) links.push({ label: 'Join Group', sub: 'Group', icon: 'facebook', url: data.facebook });
+                    if (data.whatsapp) links.push({ label: 'WhatsApp', sub: 'Support', icon: 'whatsapp', url: data.whatsapp });
+                }
+                const icons = { telegram: 'fab fa-telegram-plane', facebook: 'fab fa-facebook-f', whatsapp: 'fab fa-whatsapp', group: 'fas fa-users', youtube: 'fab fa-youtube', instagram: 'fab fa-instagram', email: 'fas fa-envelope', link: 'fas fa-link' };
+                const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+                box.innerHTML = links.filter(l => l && l.url).map(l =>
+                    `<a class="social-card" href="${esc(l.url)}" target="_blank" rel="noopener"><span class="sc-ic"><i class="${icons[l.icon] || icons.link}"></i></span><span><small>${esc(l.sub)}</small><b>${esc(l.label)}</b></span></a>`
+                ).join('');
+            }));
+
+            // 5. Sliders
+            unsubscribers.push(onSnapshot(query(collection(db, "sliders"), where("active", "==", true)), (querySnapshot) => {
+                const sliderContainer = document.getElementById('home-banner-slider');
+                if (!querySnapshot.empty) {
+                    let slidesHtml = '', dotsHtml = '', index = 0;
+                    querySnapshot.forEach((d) => {
+                        const data = d.data();
+                        const link = encodeURI(data.link || '#');
+                        slidesHtml += `<div class="slide ${index === 0 ? 'active' : ''}" onclick="window.open('${link}', '_blank')"><img src="${data.imageUrl}" alt="Banner" decoding="async" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}></div>`;
+                        dotsHtml += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>`;
+                        index++;
+                    });
+                    sliderContainer.innerHTML = slidesHtml + `<div class="slider-dots" id="slider-dots">${dotsHtml}</div>`;
+                    currentSlideIndex = 0;
+                    startSlider();
+                }
+            }));
+
+            // Payment methods added from Admin (with logos)
+            unsubscribers.push(onSnapshot(query(collection(db, "paymentSettings"), where("active", "==", true)), (snap) => {
+                paymentMethodsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (document.getElementById('payment-screen').classList.contains('active')) renderPaymentMethodTiles();
+            }));
+
+            // 6. Categories (Spin)
+            unsubscribers.push(onSnapshot(doc(db, "categories", "spin"), (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    if (data.active) {
+                        document.getElementById('spin-category-container').style.display = 'block';
+                    } else {
+                        document.getElementById('spin-category-container').style.display = 'none';
+                    }
+                }
+            }));
+
+            // 7. Products (Real-time)
+            unsubscribers.push(onSnapshot(query(collection(db, "products"), where("active", "==", true)), (querySnapshot) => {
+                gamesData = [];
+                querySnapshot.forEach((doc) => {
+                    gamesData.push({ id: doc.id, ...doc.data() });
+                });
+                renderHomeGames(gamesData);
+            }));
+
+            // 7b. Live Recent Orders (latest 10, real-time)
+            unsubscribers.push(onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(30)), (snap) => {
+                renderRecentOrders(snap);
+            }, (err) => { console.error("Recent orders error:", err); }));
+
+            // 8. Spin Settings
+            // Use a different callback name so it does not shadow Firestore's doc() function.
+            unsubscribers.push(onSnapshot(doc(db, "settings", "spin"), (spinSettingsSnapshot) => {
+                if (spinSettingsSnapshot.exists()) {
+                    const data = spinSettingsSnapshot.data();
+                    if (data.active && currentUser) {
+                        const userSpinRef = doc(db, "userSpins", currentUser.uid);
+                        onSnapshot(userSpinRef, (userSpinDoc) => {
+                            let spinsToday = 0;
+                            if (userSpinDoc.exists()) {
+                                const userDataSpin = userSpinDoc.data();
+                                const lastSpinDate = userDataSpin.lastSpinDate?.toDate().toDateString();
+                                const today = new Date().toDateString();
+                                
+                                if (lastSpinDate === today) {
+                                    spinsToday = userDataSpin.spinsToday || 0;
+                                }
+                            }
+                            
+                            const maxSpins = data.maxSpinsPerDay || 3;
+                            spinCount = maxSpins - spinsToday;
+                            
+                            document.getElementById('spin-status').textContent = `You have ${spinCount} spins left today!`;
+                            if (spinCount <= 0) {
+                                document.getElementById('spin-btn').disabled = true;
+                                document.getElementById('spin-status').textContent = "You have no spins left today. Come back tomorrow!";
+                            } else {
+                                document.getElementById('spin-btn').disabled = false;
+                            }
+                        });
+                    } else {
+                        document.getElementById('spin-status').textContent = "Spin & Win is currently unavailable.";
+                        document.getElementById('spin-btn').disabled = true;
+                    }
+                }
+            }));
+
+            // 9. User Orders (Real-time)
+            if (currentUser) {
+                unsubscribers.push(onSnapshot(query(collection(db, "orders"), where("userId", "==", currentUser.uid)), (querySnapshot) => {
+                    renderUserOrders(querySnapshot);
+                }));
+
+                unsubscribers.push(onSnapshot(query(collection(db, "voucherInventory"), where("assignedTo", "==", currentUser.uid)), (querySnapshot) => {
+                    renderUserCodes(querySnapshot);
+                }));
+
+                unsubscribers.push(onSnapshot(query(collection(db, "depositRequests"), where("userId", "==", currentUser.uid)), (querySnapshot) => {
+                    renderDepositHistory(querySnapshot);
+                }));
+            }
+        }
+
+        // ==========================================
+        // 7. RENDER FUNCTIONS
+        // ==========================================
+        function productType(game) {
+            return ['flash_sale', 'hot_product', 'others'].includes(game.type) ? game.type : 'others';
+        }
+        function productStockOut(game) {
+            return game.stock === 'stock_out' || (!game.stock && game.type === 'stock_out');
+        }
+
+        function renderHomeGames(games) {
+            const containers = {
+                flash_sale: document.getElementById('home-flash-sale'),
+                hot_product: document.getElementById('home-hot-product'),
+                others: document.getElementById('home-other-games')
+            };
+            const titles = {
+                flash_sale: document.getElementById('flash-sale-title'),
+                hot_product: document.getElementById('hot-product-title'),
+                others: document.getElementById('others-games-title')
+            };
+            Object.values(containers).forEach(c => c.innerHTML = '');
+            const counts = { flash_sale: 0, hot_product: 0, others: 0 };
+
+            games.forEach((game) => {
+                const type = productType(game);
+                const out = productStockOut(game);
+                counts[type]++;
+                containers[type].innerHTML += `
+                    <div class="game-card" onclick="openGame('${game.id}')">
+                        <img src="${game.imageUrl || 'https://via.placeholder.com/100'}" alt="${game.name}" ${out ? 'style="filter:grayscale(1);opacity:.6;"' : ''}>
+                        ${out ? '<span class="badge-hot" style="background:#6B7280;">STOCK OUT</span>' : (type !== 'others' ? '<span class="badge-hot">HOT</span>' : '')}
+                        <div class="category-shade"></div>
+                        <div class="game-info">
+                            <p>${game.name}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Hide a section title when it has no products
+            Object.keys(containers).forEach(k => {
+                const visible = counts[k] > 0;
+                titles[k].style.display = visible ? '' : 'none';
+                containers[k].style.display = visible ? '' : 'none';
+            });
+        }
+
+        function linkifyMessage(text) {
+            const raw = String(text ?? '');
+            const re = /(https?:\/\/[^\s]+|www\.[^\s]+)|(\+?\d[\d\-]{2,})/g;
+            let out = '', last = 0, m;
+            const btn = (val) => `<button type="button" class="om-copy" data-copy="${encodeURIComponent(val)}" onclick="copyMsgValue(this)"><i class="fas fa-copy"></i> Copy</button>`;
+            while ((m = re.exec(raw)) !== null) {
+                out += escHtml(raw.slice(last, m.index));
+                let val = m[0], tail = '';
+                if (m[1]) {
+                    const t = val.match(/[.,;:!?)\]]+$/);
+                    if (t) { tail = t[0]; val = val.slice(0, -tail.length); }
+                    const href = /^https?:\/\//i.test(val) ? val : 'https://' + val;
+                    out += `<a href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">${escHtml(val)}</a>${btn(val)}${escHtml(tail)}`;
+                } else {
+                    out += `<span class="om-val">${escHtml(val)}</span>${btn(val)}`;
+                }
+                last = m.index + m[0].length;
+                re.lastIndex = last;
+            }
+            out += escHtml(raw.slice(last));
+            return out;
+        }
+        function copyMsgValue(btn) {
+            const val = decodeURIComponent(btn.dataset.copy || '');
+            const done = () => {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1500);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(val).then(done).catch(() => fallbackCopy(val, done));
+            } else { fallbackCopy(val, done); }
+        }
+        function fallbackCopy(val, done) {
+            const ta = document.createElement('textarea');
+            ta.value = val; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) {}
+            ta.remove();
+        }
+        function avatarColor(name) {
+            const colors = ['#6a9f3a','#c0392b','#e67e00','#2f80ed','#8e44ad','#16a085','#d35400','#5d4037','#e91e63'];
+            let h = 0; for (const ch of String(name)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+            return colors[h % colors.length];
+        }
+        function renderRecentOrders(snap) {
+            const box = document.getElementById('recent-orders-list');
+            if (!box) return;
+            const list = [];
+            snap.forEach(d => { const o = d.data(); if (o.status !== 'rejected') list.push(o); });
+            const top = list.slice(0, 10);
+            if (!top.length) { box.innerHTML = '<div class="ro-empty">No orders yet.</div>'; return; }
+            box.innerHTML = top.map(o => {
+                const name = o.userName || 'User';
+                const done = o.status === 'completed';
+                const initials = name.trim().slice(0, 2).replace(/^./, c => c.toUpperCase());
+                return `
+                <div class="ro-row">
+                    <div class="ro-av" style="background:${avatarColor(name)}">${escHtml(initials)}</div>
+                    <div class="ro-info">
+                        <div class="ro-name">${escHtml(name)}</div>
+                        <div class="ro-sub">${escHtml(o.packageName || o.gameName || '')} - ৳${escHtml(o.price)}</div>
+                    </div>
+                    <div class="ro-badge ${done ? 'ro-done' : 'ro-pending'}">
+                        <i class="fas ${done ? 'fa-check-circle' : 'fa-clock'}"></i> ${done ? 'Done' : 'Pending'}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderUserOrders(querySnapshot) {
+            const ordersContainer = document.getElementById('orders-list');
+            if (querySnapshot.empty) {
+                ordersContainer.innerHTML = `
+                    <div class="card text-center py-10">
+                        <i class="fas fa-file-invoice text-gray-300 text-5xl mb-3"></i>
+                        <p class="text-gray-500 font-semibold">No order data found!</p>
+                        <button class="btn-primary mt-4 w-auto px-8 py-2" onclick="showView('home')">Order Now</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            const orderDocs = [];
+            querySnapshot.forEach((d) => orderDocs.push(d));
+            orderDocs.sort((a, b) => (b.data().createdAt?.toMillis?.() || Date.now()) - (a.data().createdAt?.toMillis?.() || Date.now()));
+            orderDocs.forEach((doc) => {
+                const order = doc.data();
+                const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'Just now';
+                const statusClass = `status-${order.status}`;
+                const msgs = Array.isArray(order.adminMessages) ? order.adminMessages : [];
+                const msgHtml = msgs.length ? msgs.slice().reverse().map(m => `
+                        <div class="order-msg">
+                            <div class="om-title"><i class="fas fa-comment-dots"></i> Admin Message</div>
+                            <div class="om-text">${linkifyMessage(m.text)}</div>
+                            <div class="om-time">${m.at ? new Date(m.at).toLocaleString() : ''}</div>
+                        </div>`).join('') : '';
+                
+                html += `
+                    <div class="card mb-3">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <p class="font-bold text-sm text-gray-800">${order.gameName}</p>
+                                <p class="text-xs text-gray-500 font-semibold">${order.packageName}</p>
+                            </div>
+                            <span class="status-badge ${statusClass}">${order.status.toUpperCase()}</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 border-t pt-3 font-semibold">
+                            <span>Order ID: #${doc.id.slice(-6)}</span>
+                            <span>${date}</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-bold mt-2">
+                            <span class="text-gray-600">Total</span>
+                            <span class="text-orange-500 text-lg">৳${order.price}</span>
+                        </div>
+                        ${msgHtml}
+                    </div>
+                `;
+            });
+            ordersContainer.innerHTML = html;
+        }
+
+        function renderUserCodes(querySnapshot) {
+            const codesContainer = document.getElementById('codes-list');
+            if (querySnapshot.empty) {
+                codesContainer.innerHTML = `
+                    <div class="card text-center py-10">
+                        <i class="fas fa-box-open text-gray-300 text-5xl mb-3"></i>
+                        <p class="text-gray-500 font-semibold">No code data found!</p>
+                        <button class="btn-primary mt-4 w-auto px-8 py-2" onclick="showView('home')">Order Now</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            querySnapshot.forEach((doc) => {
+                const code = doc.data();
+                html += `
+                    <div class="card mb-3 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800">${code.productName || 'Game Code'}</p>
+                            <p class="text-xs text-gray-500 font-semibold">Purchased: ${code.assignedAt ? code.assignedAt.toDate().toLocaleDateString() : 'N/A'}</p>
+                            <p class="text-lg font-mono font-bold text-orange-600 mt-1 bg-orange-50 px-3 py-1 rounded-lg inline-block">${code.code}</p>
+                        </div>
+                        <button class="btn-outline w-auto px-4 py-2 text-sm" onclick="copyCode('${code.code}')">Copy</button>
+                    </div>
+                `;
+            });
+            codesContainer.innerHTML = html;
+        }
+
+        function renderDepositHistory(querySnapshot) {
+            const historyContainer = document.getElementById('deposit-history-list');
+            if (querySnapshot.empty) {
+                historyContainer.innerHTML = '<p class="text-gray-400 text-center text-sm font-semibold">No deposit requests found.</p>';
+                return;
+            }
+
+            let html = '';
+            querySnapshot.forEach((doc) => {
+                const req = doc.data();
+                const date = req.createdAt ? req.createdAt.toDate().toLocaleDateString() : 'Just now';
+                const statusClass = `status-${req.status}`;
+                html += `
+                    <div class="card mb-2 p-3 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800">৳${req.amount}</p>
+                            <p class="text-xs text-gray-500 font-semibold">${req.method} • ${date}</p>
+                        </div>
+                        <span class="status-badge ${statusClass}">${req.status.toUpperCase()}</span>
+                    </div>
+                `;
+            });
+            historyContainer.innerHTML = html;
+        }
+
+        // ==========================================
+        // 8. UI NAVIGATION
+        // ==========================================
+        function showView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.view === viewName) el.classList.add('active');
+            });
+
+            window.scrollTo(0, 0);
+        }
+
+        function updateUserUI() {
+            if (!userData) return;
+            const initial = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+            document.querySelector('.profile-icon').textContent = initial;
+            document.getElementById('account-avatar').textContent = initial;
+            document.getElementById('account-name').textContent = userData.name || 'User';
+            document.getElementById('account-email').textContent = userData.email || '';
+            document.getElementById('account-name-list').textContent = userData.name || 'User';
+        }
+
+        function updateWalletBalanceUI() {
+            if (!userData) return;
+            const balance = userData.walletBalance || 0;
+            document.getElementById('wallet-balance-header').innerHTML = `<i class="fas fa-wallet"></i> ৳${balance}`;
+            document.getElementById('wallet-balance-game').textContent = `৳${balance}`;
+            document.getElementById('wallet-balance-account').textContent = balance;
+        }
+
+        // ==========================================
+        // 9. BANNER SLIDER LOGIC
+        // ==========================================
+        function startSlider() {
+            const slides = document.querySelectorAll('.banner-slider .slide');
+            if (slides.length === 0) return;
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                updateSlider(currentSlideIndex);
+            }, 2500);
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            updateSlider(index);
+            clearInterval(slideInterval);
+            startSlider();
+        }
+
+        function updateSlider(index) {
+            document.querySelectorAll('.banner-slider .slide').forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            document.querySelectorAll('.slider-dots .dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        // ==========================================
+        // 10. POPUP NOTICE LOGIC
+        // ==========================================
+        function showPopupNotice() {
+            // Handled by onSnapshot in startRealtimeListeners
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').classList.remove('active');
+        }
+
+        // ==========================================
+        // 11. SPIN WHEEL LOGIC
+        // ==========================================
+        async function spinWheel() {
+            if (spinCount <= 0) {
+                alert("You have no spins left today.");
+                return;
+            }
+
+            const spinBtn = document.getElementById('spin-btn');
+            const spinWheel = document.getElementById('spin-wheel');
+            
+            spinBtn.disabled = true;
+            spinBtn.textContent = "Spinning...";
+
+            const randomDeg = Math.floor(Math.random() * 360);
+            spinWheel.style.transform = `rotate(${randomDeg + 720}deg)`;
+
+            setTimeout(async () => {
+                const spinDoc = await getDoc(doc(db, "settings", "spin"));
+                let prizes = ["10% Discount", "Free 25 Diamond", "5% Discount", "Free Weekly", "20% Discount", "Free 100 Diamond", "Try Again", "50% Discount"];
+                if (spinDoc.exists() && spinDoc.data().prizes) {
+                    prizes = spinDoc.data().prizes;
+                }
+                
+                const prizeIndex = Math.floor(randomDeg / 45) % prizes.length;
+                const prize = prizes[prizeIndex] || "Try Again";
+                
+                document.getElementById('claim-prize-text').textContent = prize;
+                document.getElementById('claim-popup-overlay').classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                try {
+                    const userSpinRef = doc(db, "userSpins", currentUser.uid);
+                    const userSpinDoc = await getDoc(userSpinRef);
+                    
+                    let spinsToday = 0;
+                    if (userSpinDoc.exists()) {
+                        const data = userSpinDoc.data();
+                        const lastSpinDate = data.lastSpinDate?.toDate().toDateString();
+                        const today = new Date().toDateString();
+                        
+                        if (lastSpinDate === today) {
+                            spinsToday = data.spinsToday || 0;
+                        }
+                    }
+                    
+                    await setDoc(userSpinRef, {
+                        userId: currentUser.uid,
+                        spinsToday: spinsToday + 1,
+                        lastSpinDate: serverTimestamp(),
+                        lastPrize: prize
+                    }, { merge: true });
+                    
+                    spinCount--;
+                    document.getElementById('spin-status').textContent = `You have ${spinCount} spins left today!`;
+                    spinBtn.textContent = "Spin Now";
+                    spinBtn.disabled = spinCount <= 0;
+                    
+                } catch (error) {
+                    console.error("Error updating spin count: ", error);
+                }
+                
+                spinWheel.style.transition = 'none';
+                spinWheel.style.transform = `rotate(0deg)`;
+                setTimeout(() => {
+                    spinWheel.style.transition = 'transform 3s ease-out';
+                }, 50);
+                
+            }, 3000);
+        }
+
+        function closeClaimPopup() {
+            document.getElementById('claim-popup-overlay').classList.remove('active');
+        }
+
+        // ==========================================
+        // 12. GAME LOGIC
+        // ==========================================
+        function escHtml(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        // Packages whose admin-set expiry time has passed are hidden.
+        function activePackages(game) {
+            const now = Date.now();
+            return (game.packages || []).filter(p => !p.expiresAt || p.expiresAt > now);
+        }
+
+        function openGame(gameId) {
+            currentGame = gamesData.find(g => g.id === gameId);
+            if (!currentGame) return;
+
+            document.getElementById('game-title').textContent = currentGame.name;
+            document.getElementById('game-header-img').src = currentGame.imageUrl || 'https://via.placeholder.com/100';
+            document.getElementById('need-amount').textContent = '0';
+            
+            const packageContainer = document.getElementById('recharge-packages');
+            packageContainer.innerHTML = '';
+            const pkgs = activePackages(currentGame);
+            if (productStockOut(currentGame)) {
+                packageContainer.innerHTML = '<p class="text-sm text-red-500 font-bold text-center py-4" style="grid-column:1/-1">Stock Out — এই প্রোডাক্ট এখন স্টকে নেই।</p>';
+            } else if (pkgs.length > 0) {
+                pkgs.forEach(pkg => {
+                    packageContainer.innerHTML += `
+                        <div class="recharge-item" onclick="selectPackage(this, '${escHtml(pkg.id)}', '${encodeURIComponent(pkg.name)}', ${Number(pkg.price) || 0})">
+                            <span>${escHtml(pkg.name)}</span>
+                            <span class="price">BDT ${escHtml(pkg.price)}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                packageContainer.innerHTML = '<p class="text-sm text-gray-500 text-center py-4" style="grid-column:1/-1">No packages available.</p>';
+            }
+
+            selectedPackage = null;
+            selectedGamePaymentMethod = 'wallet';
+            
+            document.querySelectorAll('#payment-methods-game .payment-method').forEach(el => el.classList.remove('selected'));
+            document.querySelector('#payment-methods-game .payment-method[data-method="wallet"]').classList.add('selected');
+
+            // Rules & Conditions exactly as written by admin (one bullet per line)
+            const rulesBox = document.getElementById('game-rules-box');
+            const rulesList = document.getElementById('game-rules-list');
+            rulesList.innerHTML = '';
+            const ruleLines = String(currentGame.rules || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            ruleLines.forEach(line => { const li = document.createElement('li'); li.textContent = line; rulesList.appendChild(li); });
+            rulesBox.style.display = ruleLines.length ? 'block' : 'none';
+
+            updateWalletBalanceUI();
+            showView('game');
+        }
+
+        function selectPackage(element, id, name, price) {
+            document.querySelectorAll('.recharge-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedPackage = { id, name: decodeURIComponent(name), price: parseFloat(price) };
+            document.getElementById('need-amount').textContent = selectedPackage.price;
+        }
+
+        function selectGamePayment(element, method) {
+            document.querySelectorAll('#payment-methods-game .payment-method').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedGamePaymentMethod = method;
+        }
+
+        async function placeOrder() {
+            if (!currentUser) { alert("Please login first."); return; }
+            if (currentGame && productStockOut(currentGame)) { alert("This product is currently out of stock."); return; }
+            if (!selectedPackage) { alert("Please select a recharge package."); return; }
+            
+            if (!(await showPermissionPopup("Confirm Purchase", `Buy ${selectedPackage.name} for ৳${selectedPackage.price}?`, "Buy Now"))) return;
+
+            if (selectedGamePaymentMethod === 'wallet') {
+                if ((userData.walletBalance || 0) < selectedPackage.price) {
+                    alert("Insufficient wallet balance. Please add money or choose Instant Pay.");
+                    return;
+                }
+
+                try {
+                    const userRef = doc(db, "users", currentUser.uid);
+                    const orderRef = doc(collection(db, "orders"));
+                    
+                    await runTransaction(db, async (transaction) => {
+                        const userDoc = await transaction.get(userRef);
+                        if (!userDoc.exists()) throw "User does not exist!";
+                        
+                        const currentBalance = userDoc.data().walletBalance || 0;
+                        if (currentBalance < selectedPackage.price) throw "Insufficient balance.";
+
+                        transaction.update(userRef, { walletBalance: currentBalance - selectedPackage.price });
+
+                        transaction.set(orderRef, {
+                            userId: currentUser.uid,
+                            userName: userData.name,
+                            gameId: currentGame.id,
+                            gameName: currentGame.name,
+                            packageId: selectedPackage.id,
+                            packageName: selectedPackage.name,
+                            price: selectedPackage.price,
+                            paymentMethod: 'wallet',
+                            status: 'pending',
+                            createdAt: serverTimestamp()
+                        });
+                    });
+                    
+                    alert("Order placed successfully! Waiting for admin approval.");
+                    showView('orders');
+                } catch (error) {
+                    console.error("Transaction failed: ", error);
+                    alert("Order failed: " + error);
+                }
+            } else {
+                openPaymentScreen();
+            }
+        }
+
+        // ==========================================
+        // 13. PAYMENT SCREEN LOGIC
+        // ==========================================
+
+        // ---- Brand payment instructions (no logo URL needed) ----
+        const PAY_BRANDS = {
+            bkash:  { label: 'bKash',  color: '#D0286F', ussd: '*247#', app: 'bKash অ্যাপ খুলুন', pin: 'bKash PIN',            action: 'পেমেন্ট' },
+            nagad:  { label: 'NAGAD',  color: '#E31B23', ussd: '*167#', app: 'NAGAD অ্যাপে যান',   pin: 'NAGAD মোবাইল মেনু PIN', action: 'Send Money' },
+            rocket: { label: 'Rocket', color: '#8B2A8A', ussd: '*322#', app: 'Rocket অ্যাপ খুলুন', pin: 'Rocket PIN',            action: 'Send Money' }
+        };
+        function payBrand(m) {
+            const n = String(m && m.name || '').toLowerCase();
+            const key = n.includes('bkash') ? 'bkash' : n.includes('nagad') ? 'nagad' : n.includes('rocket') ? 'rocket' : null;
+            if (key) return PAY_BRANDS[key];
+            return { label: m && m.name || 'Payment', color: '#374151', ussd: '', app: '', pin: (m && m.name || '') + ' PIN', action: 'Send Money' };
+        }
+        function buildPayCard(m, amount, opts = {}) {
+            const b = payBrand(m);
+            const numId = opts.numId || 'payment-number';
+            const action = (m.instructions && m.instructions.trim() && m.instructions.trim().toLowerCase() !== 'send money') ? m.instructions.trim() : b.action;
+            const amt = Number(amount) ? String(Number(amount)) : '';
+            const first = b.ussd
+                ? `${escHtml(b.ussd)} ডায়াল করে আপনার ${escHtml(b.label)} মোবাইল মেনুতে যান অথবা ${escHtml(b.app)}`
+                : `আপনার ${escHtml(b.label)} অ্যাপ খুলুন`;
+            return `<div class="pay-card" style="background:${b.color}">
+                ${opts.input === false ? '' : `<h4>ট্রানজেকশন আইডি দিন</h4><input type="text" class="pay-in" id="${opts.inputId || 'payment-txid'}" placeholder="ট্রানজেকশন আইডি দিন" autocomplete="off">`}
+                <ul>
+                    <li>${first}</li>
+                    <li>${escHtml(action)} -এ ক্লিক করুন</li>
+                    <li>এই নম্বরে টাকা পাঠান <span class="pay-num" id="${numId}">${escHtml(m.number)}</span><button type="button" class="pay-copy" onclick="copyToClipboard('${numId}')"><i class="far fa-copy"></i> কপি</button></li>
+                    ${amt ? `<li>টাকার পরিমাণঃ <span class="pay-num">${escHtml(amt)}</span></li>` : ''}
+                    <li>নিশ্চিত করে এখন আপনার ${escHtml(b.pin)} লিখুন</li>
+                    <li>টাকা পাঠান এবং ট্রানজ্যাকশন আইডি কপি করুন</li>
+                    <li>ট্রানজ্যাকশন আইডি লিখে ভেরিফাই চাপুন</li>
+                </ul>
+            </div>`;
+        }
+
+        function renderPaymentMethodTiles() {
+            const grid = document.getElementById('payment-methods-grid');
+            if (!paymentMethodsData.length) {
+                grid.innerHTML = '<p class="text-sm text-gray-500" style="grid-column:1/-1;text-align:center;">No payment methods available.</p>';
+                return;
+            }
+            grid.innerHTML = paymentMethodsData.map(m => `
+                <div class="pay2-method ${selectedInstantMethod && selectedInstantMethod.id === m.id ? 'selected' : ''}" onclick="selectPaymentMethod('${m.id}')">
+                    <span class="pay-brand-tile" style="background:${payBrand(m).color};border-radius:6px;width:100%;height:100%;display:flex;align-items:center;justify-content:center">${escHtml(m.name)}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectPaymentMethod(id) {
+            selectedInstantMethod = paymentMethodsData.find(m => m.id === id) || null;
+            renderPaymentMethodTiles();
+            if (!selectedInstantMethod) return;
+            const mf = document.getElementById('payment-manual-fields');
+            mf.innerHTML = buildPayCard(selectedInstantMethod, selectedPackage ? selectedPackage.price : 0);
+            document.getElementById('payment-manual-fields').style.display = 'block';
+        }
+
+        function openHelp() {
+            if (helpLinkUrl) window.open(helpLinkUrl, '_blank');
+        }
+
+        function openPaymentScreen() {
+            if (!selectedPackage || !currentGame) return;
+
+            selectedInstantMethod = null;
+            document.getElementById('payment-logo').src = document.getElementById('app-logo').src;
+            document.getElementById('payment-amount').textContent = Number(selectedPackage.price).toFixed(2);
+            document.getElementById('payment-info-game').textContent = currentGame.name;
+            document.getElementById('payment-info-package').textContent = selectedPackage.name;
+            document.getElementById('payment-manual-fields').style.display = 'none';
+            document.getElementById('payment-manual-fields').innerHTML = '';
+
+            const bannerWrap = document.getElementById('pay2-banner-wrap');
+            if (paymentBannerUrl) {
+                document.getElementById('pay2-banner').src = paymentBannerUrl;
+                bannerWrap.style.display = 'block';
+            } else {
+                bannerWrap.style.display = 'none';
+            }
+
+            renderPaymentMethodTiles();
+            document.getElementById('payment-screen').classList.add('active');
+        }
+
+        function closePaymentScreen() {
+            document.getElementById('payment-screen').classList.remove('active');
+        }
+
+        async function finalizePayment() {
+            const txId = (document.getElementById('payment-txid') || {value:''}).value.trim();
+
+            if (!selectedInstantMethod) {
+                alert("Please select a payment method.");
+                return;
+            }
+            if (!txId) {
+                alert("Please enter the Transaction ID.");
+                return;
+            }
+
+            try {
+                const orderRef = doc(collection(db, "orders"));
+                await setDoc(orderRef, {
+                    userId: currentUser.uid,
+                    userName: userData.name,
+                    gameId: currentGame.id,
+                    gameName: currentGame.name,
+                    packageId: selectedPackage.id,
+                    packageName: selectedPackage.name,
+                    price: selectedPackage.price,
+                    paymentMethod: 'instant',
+                    paymentMethodName: selectedInstantMethod.name,
+                    transactionId: txId,
+                    paymentNumber: selectedInstantMethod.number,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                alert("Order placed successfully! Waiting for admin approval.");
+                closePaymentScreen();
+                showView('orders');
+            } catch (error) {
+                console.error("Error placing order: ", error);
+                alert("Order failed: " + error.message);
+            }
+        }
+
+        // ==========================================
+        // 14. ADD MONEY (DEPOSIT)
+        // ==========================================
+        function proceedToDeposit() {
+            const amount = document.getElementById('deposit-amount').value;
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            
+            document.getElementById('deposit-methods-card').style.display = 'block';
+            document.getElementById('deposit-info-card').style.display = 'none';
+            
+            loadDepositPaymentMethods();
+        }
+
+        async function loadDepositPaymentMethods() {
+            const methodsList = document.getElementById('deposit-methods-list');
+            methodsList.innerHTML = '<p class="text-sm text-gray-500 text-center">Loading methods...</p>';
+            
+            try {
+                const q = query(collection(db, "paymentSettings"), where("active", "==", true));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    methodsList.innerHTML = '<p class="text-sm text-gray-500 text-center">No payment methods available.</p>';
+                    return;
+                }
+                
+                let html = '';
+                querySnapshot.forEach((doc) => {
+                    const method = doc.data();
+                    const methodName = method.name.toLowerCase();
+                    
+                    let bgColor = '#F9FAFB';
+                    let borderColor = '#E5E7EB';
+                    let iconColor = '#6B7280';
+                    let iconClass = 'fa-credit-card';
+                    
+                    if (methodName.includes('bkash')) {
+                        bgColor = '#FCE4EC'; borderColor = '#E2136E'; iconColor = '#E2136E'; iconClass = 'fa-mobile-alt';
+                    } else if (methodName.includes('nagad')) {
+                        bgColor = '#FFF8E1'; borderColor = '#F7941D'; iconColor = '#F7941D'; iconClass = 'fa-mobile-alt';
+                    } else if (methodName.includes('rocket')) {
+                        bgColor = '#F3E5F5'; borderColor = '#8E24AA'; iconColor = '#8E24AA'; iconClass = 'fa-mobile-alt';
+                    } else if (methodName.includes('bank')) {
+                        bgColor = '#E3F2FD'; borderColor = '#1E88E5'; iconColor = '#1E88E5'; iconClass = 'fa-university';
+                    }
+
+                    html += `
+                        <div class="payment-method" data-method="${methodName}" style="background: ${bgColor}; border-color: ${borderColor};" onclick="selectDepositMethod(this, '${method.name}', '${method.number}', '${method.instructions}')">
+                            <div class="method-info">
+                                <i class="fas ${iconClass}" style="color: ${iconColor};"></i>
+                                <div>
+                                    <p class="text-sm">${method.name}</p>
+                                    <p class="text-xs text-gray-500">${method.instructions || 'Send Money'}</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right" style="color: ${iconColor};"></i>
+                        </div>
+                    `;
+                });
+                methodsList.innerHTML = html;
+            } catch (error) {
+                console.error("Error loading payment methods: ", error);
+                methodsList.innerHTML = '<p class="text-sm text-red-500 text-center">Failed to load methods.</p>';
+            }
+        }
+
+        let selectedDepositMethod = null;
+        function selectDepositMethod(element, name, number, instructions) {
+            document.querySelectorAll('#deposit-methods-list .payment-method').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDepositMethod = { name, number, instructions };
+            
+            document.querySelectorAll('#deposit-methods-list .payment-method').forEach(el => {
+                el.style.boxShadow = 'none';
+                if (el === element) {
+                    el.style.boxShadow = '0 0 0 2px var(--primary)';
+                }
+            });
+
+            document.getElementById('deposit-number').textContent = number;
+            document.getElementById('deposit-instructions').innerHTML = buildPayCard({ name, number, instructions }, document.getElementById('deposit-amount').value, { input: false, numId: 'deposit-number' });
+            document.getElementById('deposit-info-card').style.display = 'block';
+        }
+
+        async function submitDepositRequest() {
+            if (!currentUser) { alert("Please login."); return; }
+            if (!selectedDepositMethod) { alert("Please select a payment method."); return; }
+            
+            const amount = parseFloat(document.getElementById('deposit-amount').value);
+            const txId = document.getElementById('deposit-txid').value.trim();
+            
+            if (!amount || amount <= 0) { alert("Invalid amount."); return; }
+            if (!txId) { alert("Please enter the Transaction ID."); return; }
+
+            try {
+                await addDoc(collection(db, "depositRequests"), {
+                    userId: currentUser.uid,
+                    userName: userData.name,
+                    amount: amount,
+                    method: selectedDepositMethod.name,
+                    paymentNumber: selectedDepositMethod.number,
+                    txId: txId,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+                
+                alert("Deposit request submitted! Please wait for admin verification.");
+                document.getElementById('deposit-amount').value = '';
+                document.getElementById('deposit-txid').value = '';
+                document.getElementById('deposit-methods-card').style.display = 'none';
+                document.getElementById('deposit-info-card').style.display = 'none';
+                showView('account');
+            } catch (error) {
+                console.error("Error submitting deposit: ", error);
+                alert("Failed to submit deposit request. Please try again.");
+            }
+        }
+
+        // ==========================================
+        // 15. UTILITIES
+        // ==========================================
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert("Code copied to clipboard!");
+            });
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied: " + text);
+            });
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            const tabLogin = document.getElementById('tab-login');
+            const tabReg = document.getElementById('tab-register');
+            
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+                tabLogin.classList.add('active');
+                tabLogin.classList.remove('inactive');
+                tabReg.classList.remove('active');
+                tabReg.classList.add('inactive');
+            } else {
+                loginForm.style.display = 'none';
+                regForm.style.display = 'block';
+                tabReg.classList.add('active');
+                tabReg.classList.remove('inactive');
+                tabLogin.classList.remove('active');
+                tabLogin.classList.add('inactive');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                let msg = "লগইন ব্যর্থ হয়েছে। ";
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg += "ভুল ইমেইল বা পাসওয়ার্ড! দয়া করে সঠিক তথ্য দিন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।";
+                } else if (error.code === 'auth/too-many-requests') {
+                    msg += "অনেকবার ভুল চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
+                } else {
+                    msg += error.message;
+                }
+                alert(msg);
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            
+            if(password.length < 6) {
+                alert("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।");
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await setDoc(doc(db, "users", userCredential.user.uid), {
+                    name: name,
+                    email: email,
+                    walletBalance: 0,
+                    isAdmin: false,
+                    createdAt: serverTimestamp()
+                });
+                alert("রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।");
+                switchAuthTab('login');
+            } catch (error) {
+                let msg = "রেজিস্ট্রেশন ব্যর্থ হয়েছে। ";
+                if (error.code === 'auth/email-already-in-use') {
+                    msg += "এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে।";
+                } else if (error.code === 'auth/invalid-email') {
+                    msg += "ইমেইলটি সঠিক নয়।";
+                } else {
+                    msg += error.message;
+                }
+                alert(msg);
+            }
+        }
+
+        async function logoutUser() {
+            if(await showPermissionPopup("লগআউট নিশ্চিত করুন", "আপনি কি লগআউট করতে চান?", "লগআউট")) {
+                await signOut(auth);
+                window.location.reload();
+            }
+        }
+
+        async function resetPassword() {
+            const email = document.getElementById('login-email').value;
+            if (!email) {
+                alert("পাসওয়ার্ড রিসেট করতে প্রথমে ইমেইল এড্রেস লিখুন।");
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert("পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে!");
+            } catch (error) {
+                alert("এরর: " + error.message);
+            }
+        }
+
+        // Expose functions to global scope
+        window.showView = showView;
+        window.openGame = openGame;
+        window.selectPackage = selectPackage;
+        window.placeOrder = placeOrder;
+        window.proceedToDeposit = proceedToDeposit;
+        window.submitDepositRequest = submitDepositRequest;
+        window.logoutUser = logoutUser;
+        window.switchAuthTab = switchAuthTab;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.resetPassword = resetPassword;
+        window.copyCode = copyCode;
+        window.copyMsgValue = copyMsgValue;
+        window.copyToClipboard = copyToClipboard;
+        window.updateWalletBalanceUI = updateWalletBalanceUI;
+        window.togglePassword = togglePassword;
+        window.closePopup = closePopup;
+        window.selectGamePayment = selectGamePayment;
+        window.openPaymentScreen = openPaymentScreen;
+        window.closePaymentScreen = closePaymentScreen;
+        window.finalizePayment = finalizePayment;
+        window.selectPaymentMethod = selectPaymentMethod;
+        window.openHelp = openHelp;
+        window.selectDepositMethod = selectDepositMethod;
+        window.goToSlide = goToSlide;
+        window.spinWheel = spinWheel;
+        window.closeClaimPopup = closeClaimPopup;
+
+    </script>
+
+<div id="permission-popup" class="permission-overlay" role="dialog" aria-modal="true" aria-labelledby="permission-title">
+ <div class="permission-box"><div class="permission-icon"><i class="fas fa-shield-alt"></i></div><div id="permission-title" class="permission-title">Confirm action</div><p id="permission-message" class="permission-message">Are you sure?</p><div class="permission-actions"><button type="button" class="permission-cancel" id="permission-cancel">Cancel</button><button type="button" class="permission-confirm" id="permission-confirm">Confirm</button></div></div>
+</div>
+
+<div id="app-notice-popup" class="permission-overlay" role="dialog" aria-modal="true" aria-labelledby="app-notice-title">
+ <div class="permission-box">
+  <div class="permission-icon"><i class="fas fa-info-circle"></i></div>
+  <div id="app-notice-title" class="permission-title">Notice</div>
+  <p id="app-notice-message" class="permission-message"></p>
+  <div class="permission-actions"><button type="button" class="permission-confirm" id="app-notice-ok">OK</button></div>
+ </div>
+</div>
+<div id="app-input-popup" class="permission-overlay" role="dialog" aria-modal="true" aria-labelledby="app-input-title">
+ <div class="permission-box">
+  <div class="permission-icon"><i class="fas fa-edit"></i></div>
+  <div id="app-input-title" class="permission-title">Enter value</div>
+  <label id="app-input-label" for="app-input-value" class="permission-message"></label>
+  <input id="app-input-value" type="number" step="any" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:12px 0;font:inherit;">
+  <div class="permission-actions">
+   <button type="button" class="permission-cancel" id="app-input-cancel">Cancel</button>
+   <button type="button" class="permission-confirm" id="app-input-save">Save</button>
+  </div>
+ </div>
+</div>
+
+</body>
+</html>
